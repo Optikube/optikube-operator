@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optikube
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: optikube
+  template:
+    metadata:
+      labels:
+        app: optikube
+    spec:
+      containers:
+        - name: optikube
+          image: gcr.io/hardy-nation-412201/optikube
+          ports:
+            - containerPort: 8080
