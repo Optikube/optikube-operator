@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optikube4
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: optikube4
+  template:
+    metadata:
+      labels:
+        app: optikube4
+    spec:
+      containers:
+        - name: optikube4
+          image: gcr.io/hardy-nation-412201/optikube4.0
+          ports:
+            - containerPort: 8080
+          resources: 
+            requests:
+              cpu: "200m"
+              memory: "400Mi"
+            limits:
+              cpu: "500m"
+              memory: "600Mi"
+      imagePullSecrets:
+        - name: gcr-json-key
