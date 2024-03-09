@@ -1,16 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: optikube4
+  name: optikube-deployment
+  namespace: optikube-namespace
 spec:
-  replicas: 3
+  replicas: 5
   selector:
     matchLabels:
-      app: optikube4
+      app: optikube
   template:
     metadata:
       labels:
-        app: optikube4
+        app: optikube
     spec:
       containers:
         - name: optikube4
