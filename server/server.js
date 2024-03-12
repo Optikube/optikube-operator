@@ -5,10 +5,20 @@ const app = express();
 
 const port = 8080;
 
+const kubecostRoutes = require('./routes/kubecostRoutes.js');
+const axios = require('axios');
+const hostname = '0.0.0.0';
+const PORT = 8080;
+
 let isRunning = false;
 let costExceedsThreshold = false;
 let lowerLimit = 50;
 let upperLimit = 80;
+
+app.use('/api',kubecostRoutes);
+app.get('/', (req, res) =>{
+  res.send('working?');
+});
 
 const continuousEvaluateCostAndUpdateHPA = async () => {
   while (isRunning) {
