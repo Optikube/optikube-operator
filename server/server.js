@@ -12,8 +12,8 @@ const PORT = 8080;
 
 let isRunning = false;
 let costExceedsThreshold = false;
-let lowerLimit = 50;
-let upperLimit = 80;
+let lowerLimit = 20;
+let upperLimit = 40;
 
 app.use('/api',kubecostRoutes);
 app.get('/', (req, res) =>{
@@ -23,6 +23,7 @@ app.get('/', (req, res) =>{
 const continuousEvaluateCostAndUpdateHPA = async () => {
   while (isRunning) {
     await evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperLimit);
+    console.log('Evaluating cost and updating HPA.')
     // delay between invocation
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
@@ -33,14 +34,17 @@ app.get('/start', (req, res) => {
   if (!isRunning) {
     isRunning = true;
     continuousEvaluateCostAndUpdateHPA().catch(err => console.error(err));
+    console.log('Autoscaling started.')
     res.status(200).send('Autoscaling started.');
   } else {
+    console.log('Autoscaling already running.')
     res.status(200).send('Autoscaling already running.');
   }
 })
 
 app.get('/stop', (req, res) => {
   isRunning = false;
+  console.log("Autoscaling stopped.")
   res.status(200).send('Autoscaling stopped.')
 })
 
@@ -50,6 +54,7 @@ app.get('/adjust', (req, res) => {
 }
   lowerLimit = req.query.lowerLimit ? parseInt(req.query.lowerLimit) : lowerLimit;
   upperLimit = req.query.upperLimit ? parseInt(req.query.upperLimit) : upperLimit;
+  console.log('Parameters adjusted.')
   res.status(200).send('Parameters adjusted.')
 })
 
