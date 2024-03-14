@@ -8,32 +8,54 @@ kc.loadFromCluster();
 // Confirm kc config?
 console.log('kc config', kc)
 
-//What is the difference in the Autoscaling v1 vs v2?
+// Autoscaling v2 is available but since all our K8s yaml use API v1 we're need to use v1 for consistency.
 const autoscalingClient = kc.makeApiClient(k8s.AutoscalingV1Api)
 
 // Function to update HPA threshold
 async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
-    console.log('autoscalingClient', autoscalingClient)
     try {
         // Fetch the current HPA configuration.
-        const response = await autoscalingClient.readNamespacedHorizontalPodAutoscaler(hpaName, namespace);
-        console.log('Response:', response)
-        // Check if response is ok.
-        // Response.statusCode 
-        if (response.statusCode) {
-            // Destructure the body assignign to currentHPA
-            const {body: currentHPA} = response
-            console.log('currentHPA', currentHPA);
-            // Update the CPU utilization target
-            currentHPA.spec.targetCPUUtilizationPercentage = newCpuTarget;
-    
-            console.log('newCpuTarget', newCpuTarget);
-            
-            // Apply the update
-            await autoscalingClient.replaceNamespacedHorizontalPodAutoscaler(hpaName, namespace, currentHPA);
+        // The response is a object with a body and response properties.
+        // The body is an instance of the V1HorizontalPodAutoscaler class from the K8s node client library.
+            // Contains basic K8s object info such as spec, status, etc.
+        // The response is instance of the http.IncomingMessage from node.js
+            // This contains details about the HTTP response, but is abstracted away in the node client library to be the property titled "response".
+        const hpaResponse = await autoscalingClient.readNamespacedHorizontalPodAutoscaler(hpaName, namespace);
+        console.log('Response:', hpaResponse);
+
+        // If the status code is not 200 log error and console.log status code.
+        if (hpaResponse.response.statusCode !== 200) {
+            console.error('Error fetching HPA:', hpaName.response.statusCode);
+            //exit if there is an error?
+            return;
+        }
+        // Retrieve body from HPA response and assign to currentHPA.
+        const currentHPA = hpaResponse.body;
+        // console.log('Current HPA:', currentHPA);
+        // If the spec doesn't matcht target --> patch HPA with new target.
+        if(currentHPA.spec.targetCPUUtilizationPercentage !== newCpuTarget) {
+            console.log('Updating HPA target CPU Utilization');
+            // Define patch payload for json merge patch.
+            const patchPayload = {
+                "spec": {
+                    "targetCPUUtilizationPercentage": newCpuTarget
+                }
+            };
+            // Patch existing CPU target in HPA.
+            await autoscalingClient.patchNamespacedHorizontalPodAutoscaler(
+                hpaName,
+                namespace,
+                patchPayload,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                {headers: { "Content-Type": "application/merge-patch+json"}}
+            );
             console.log(`Updated HPA: ${hpaName} in namespace: ${namespace} to target CPU utilization: ${newCpuTarget}%`);
         } else {
-            console.error('error', response.status)
+            console.log(`Current HPA target CPU utilization ${currentHPA.spec.targetCPUUtilizationPercentage} in nameepsace ${namespace} matches new target CPU utilization ${newCpuTarget}%`);
         }
     } catch (error) {
         console.error(`Failed to update HPA: ${error}`);
@@ -48,7 +70,6 @@ async function evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperL
     const hpaName = 'mercury-hpa';
     const namespace = 'mercury-namespace';
     
-
     // const costExceedsThreshold = true; // Example with true as the result
     const newCpuTarget = costExceedsThreshold ? lowerLimit :upperLimit; // Adjust CPU target based on cost
     

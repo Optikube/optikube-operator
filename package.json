@@ -1,12 +1,11 @@
 {
-  "scripts":{
+  "scripts": {
     "server": "",
-    "start":"node server/server.js"
+    "start": "node server/server.js"
   },
   "dependencies": {
     "@kubernetes/client-node": "^0.20.0",
     "axios": "^1.6.7",
-    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

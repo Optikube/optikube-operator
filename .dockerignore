@@ -10,3 +10,6 @@ node_modules
 
 # service account secret key
 hardy-nation-412201-b57701317745.json
+
+# Exclude yaml files for K8s configs
+kubernetes/
