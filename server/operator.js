@@ -4,20 +4,23 @@ const k8s = require('@kubernetes/client-node');
 const kc = new k8s.KubeConfig();
 // Loads the Kubernetes configuratiion from the default location
 // This can be changing to a specific path depending on need
-kc.loadFromDefault();
+kc.loadFromCluster();
 // Confirm kc config?
 console.log('kc config', kc)
 
 //What is the difference in the Autoscaling v1 vs v2?
-const autoscalingClient = kc.makeApiClient(k8s.AutoscalingV2Api)
+const autoscalingClient = kc.makeApiClient(k8s.AutoscalingV1Api)
 
 // Function to update HPA threshold
 async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
+    console.log('autoscalingClient', autoscalingClient)
     try {
         // Fetch the current HPA configuration.
         const response = await autoscalingClient.readNamespacedHorizontalPodAutoscaler(hpaName, namespace);
+        console.log('Response:', response)
         // Check if response is ok.
-        if (response.ok) {
+        // Response.statusCode 
+        if (response.statusCode) {
             // Destructure the body assignign to currentHPA
             const {body: currentHPA} = response
             console.log('currentHPA', currentHPA);
@@ -41,6 +44,7 @@ async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
 
 // Function to evaluate 
 async function evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperLimit) {
+    console.log('Entering evaluateCostAndUpdateHPA function')
     const hpaName = 'mercury-hpa';
     const namespace = 'mercury-namespace';
     
@@ -58,4 +62,4 @@ async function evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperL
 // evaluateCostAndUpdateHPA();
 
 // Export function
-module.exports = evaluateCostAndUpdateHPA;
+module.exports = { evaluateCostAndUpdateHPA };
