@@ -1,5 +1,5 @@
 const express = require('express');
-const evaluateCostAndUpdateHPA = require('./operator.js')
+const { evaluateCostAndUpdateHPA } = require('./operator')
 
 const app = express();
 
@@ -21,11 +21,12 @@ app.get('/', (req, res) =>{
 });
 
 const continuousEvaluateCostAndUpdateHPA = async () => {
-  while (isRunning) {
+  if (!isRunning) return;
+  else {
+    console.log('isRunning: ', isRunning);
     await evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperLimit);
     console.log('Evaluating cost and updating HPA.')
-    // delay between invocation
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    setTimeout(continuousEvaluateCostAndUpdateHPA, 1000)
   }
 }
 
@@ -44,6 +45,7 @@ app.get('/start', (req, res) => {
 
 app.get('/stop', (req, res) => {
   isRunning = false;
+  console.log('isRunning: ', isRunning);
   console.log("Autoscaling stopped.")
   res.status(200).send('Autoscaling stopped.')
 })
