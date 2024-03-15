@@ -8,9 +8,9 @@ const { stringify } = require('querystring');
 
 //pods tend to die, may need to change out w new pod name
 // kubectl get pods -n optikube-namespace --> run in terminal to get pods of optikube
-const theChosenPod = "optikube-deployment-5f77bdfd84-9bzx7"
+const theChosenPod = "optikube-deployment-875bccbbc-ljd9h"
 
-
+//this route retrieves metrics on optikube pod
 const kubecostAllocationData = async (req, res, next) => {
     try {
         console.log('entering try block of kubecostAllo middleware');
@@ -57,7 +57,7 @@ const kubecostAllocationData = async (req, res, next) => {
     }
 };
 
-
+//this route retrieves metrics on optikube namespace
 const kubecostNamespaceData = async (req, res, next) => {
     try {
         console.log('entering try block of kubecost namespace middleware');
