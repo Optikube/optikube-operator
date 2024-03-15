@@ -6,6 +6,7 @@ const app = express();
 const port = 8080;
 
 const kubecostRoutes = require('./routes/kubecostRoutes.js');
+const analysisRoutes = require ('./routes/analysisRoutes.js');
 const axios = require('axios');
 const hostname = '0.0.0.0';
 const PORT = 8080;
@@ -15,9 +16,11 @@ let costExceedsThreshold = false;
 let lowerLimit = 20;
 let upperLimit = 40;
 
+
+app.use('/api/analysis', analysisRoutes);
 app.use('/api',kubecostRoutes);
 app.get('/', (req, res) =>{
-  res.send('working?');
+  res.send('8080 is working and ready to goooooooo!');
 });
 
 const continuousEvaluateCostAndUpdateHPA = async () => {
@@ -62,4 +65,15 @@ app.get('/adjust', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server listening on port: ${port}...`);
+});
+
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: "Express error handler caught unknown middleware error",
+    status: 500,
+    message: { err: "An error occurred" },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).json(errorObj.message);
 });
