@@ -21,7 +21,7 @@
 # CMD ["node", "server/server.js"]
 
 # Use a base image that includes build tools
-FROM node:14-alpine as builder
+FROM node:21-alpine as builder
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -38,7 +38,7 @@ RUN apk add --no-cache --virtual .gyp python3 make g++ && \
 COPY server ./server
 
 # Use a slimmer image for the final image
-FROM node:14-alpine
+FROM node:21-slim
 
 # Set the working directory in the container
 WORKDIR /usr/src/app

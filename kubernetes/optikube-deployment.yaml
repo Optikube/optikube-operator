@@ -4,7 +4,7 @@ metadata:
   name: optikube-deployment
   namespace: optikube-namespace
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app: optikube
@@ -13,9 +13,10 @@ spec:
       labels:
         app: optikube
     spec:
+      serviceAccountName: optikube-service-account
       containers:
         - name: optikube4
-          image: gcr.io/hardy-nation-412201/optikube4.5
+          image: gcr.io/hardy-nation-412201/optikube4.7.1
           ports:
             - containerPort: 8080
           resources: 
