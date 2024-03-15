@@ -11,9 +11,12 @@ const hostname = '0.0.0.0';
 const PORT = 8080;
 
 let isRunning = false;
-let costExceedsThreshold = false;
-let lowerLimit = 20;
-let upperLimit = 40;
+// let costExceedsThreshold = false;
+// let lowerLimit = 20;
+// let upperLimit = 40;
+let cpuTarget = 50;
+let newMinReplicasTarget;
+let newMaxReplicasTarget;
 
 app.use('/api',kubecostRoutes);
 app.get('/', (req, res) =>{
@@ -23,8 +26,7 @@ app.get('/', (req, res) =>{
 const continuousEvaluateCostAndUpdateHPA = async () => {
   if (!isRunning) return;
   else {
-    console.log('isRunning: ', isRunning);
-    await evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperLimit);
+    await evaluateCostAndUpdateHPA(cpuTarget, newMinReplicasTarget, newMaxReplicasTarget);
     console.log('Evaluating cost and updating HPA.')
     setTimeout(continuousEvaluateCostAndUpdateHPA, 1000)
   }
@@ -45,17 +47,19 @@ app.get('/start', (req, res) => {
 
 app.get('/stop', (req, res) => {
   isRunning = false;
-  console.log('isRunning: ', isRunning);
   console.log("Autoscaling stopped.")
   res.status(200).send('Autoscaling stopped.')
 })
 
 app.get('/adjust', (req, res) => {
-  if (req.query.costExceedsThreshold !== undefined) {
-    costExceedsThreshold = req.query.costExceedsThreshold === 'true';
-}
-  lowerLimit = req.query.lowerLimit ? parseInt(req.query.lowerLimit) : lowerLimit;
-  upperLimit = req.query.upperLimit ? parseInt(req.query.upperLimit) : upperLimit;
+//   if (req.query.costExceedsThreshold !== undefined) {
+//     costExceedsThreshold = req.query.costExceedsThreshold === 'true';
+// }
+//   lowerLimit = req.query.lowerLimit ? parseInt(req.query.lowerLimit) : lowerLimit;
+//   upperLimit = req.query.upperLimit ? parseInt(req.query.upperLimit) : upperLimit;
+  cpuTarget = parseInt(req.query.cpuTarget) || cpuTarget;
+  newMinReplicasTarget = parseInt(req.query.newMinReplicasTarget) || undefined;
+  newMaxReplicasTarget = parseInt(req.query.newMaxReplicasTarget) || undefined;
   console.log('Parameters adjusted.')
   res.status(200).send('Parameters adjusted.')
 })

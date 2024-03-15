@@ -12,7 +12,7 @@ console.log('kc config', kc)
 const autoscalingClient = kc.makeApiClient(k8s.AutoscalingV1Api)
 
 // Function to update HPA threshold
-async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
+async function updateHPAThreshold(hpaName, namespace, newCpuTarget, newMinReplicasTarget, newMaxReplicasTarget) {
     try {
         // Fetch the current HPA configuration.
         // The response is a object with a body and response properties.
@@ -21,7 +21,7 @@ async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
         // The response is instance of the http.IncomingMessage from node.js
             // This contains details about the HTTP response, but is abstracted away in the node client library to be the property titled "response".
         const hpaResponse = await autoscalingClient.readNamespacedHorizontalPodAutoscaler(hpaName, namespace);
-        console.log('Response:', hpaResponse);
+        // console.log('Response:', hpaResponse);
 
         // If the status code is not 200 log error and console.log status code.
         if (hpaResponse.response.statusCode !== 200) {
@@ -38,7 +38,9 @@ async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
             // Define patch payload for json merge patch.
             const patchPayload = {
                 "spec": {
-                    "targetCPUUtilizationPercentage": newCpuTarget
+                    "targetCPUUtilizationPercentage": newCpuTarget,
+                    "minReplicas": newMinReplicasTarget || currentHPA.spec.minReplicas,
+                    "maxReplicas": newMaxReplicasTarget || currentHPA.spec.maxReplicas,
                 }
             };
             // Patch existing CPU target in HPA.
@@ -53,7 +55,12 @@ async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
                 undefined,
                 {headers: { "Content-Type": "application/merge-patch+json"}}
             );
-            console.log(`Updated HPA: ${hpaName} in namespace: ${namespace} to target CPU utilization: ${newCpuTarget}%`);
+            console.log(`Updated HPA: ${hpaName} to target CPU utilization: ${newCpuTarget}%`);
+            console.log(`Current HPA Status:
+                            CPU Utilization: ${currentHPA.status.currentCPUUtilizationPercentage}%
+                            Current Pod Count: ${currentHPA.status.currentReplicas}
+                            Desired Pod Count: ${currentHPA.status.desiredReplicas}
+                            `)
         } else {
             console.log(`Current HPA target CPU utilization ${currentHPA.spec.targetCPUUtilizationPercentage} in nameepsace ${namespace} matches new target CPU utilization ${newCpuTarget}%`);
         }
@@ -65,18 +72,19 @@ async function updateHPAThreshold(hpaName, namespace, newCpuTarget) {
 
 
 // Function to evaluate 
-async function evaluateCostAndUpdateHPA(costExceedsThreshold, lowerLimit, upperLimit) {
+async function evaluateCostAndUpdateHPA(cpuTarget) {
     console.log('Entering evaluateCostAndUpdateHPA function')
-    const hpaName = 'mercury-hpa';
-    const namespace = 'mercury-namespace';
+    const hpaName = 'php-hpa';
+    const namespace = 'php-namespace';
     
     // const costExceedsThreshold = true; // Example with true as the result
-    const newCpuTarget = costExceedsThreshold ? lowerLimit :upperLimit; // Adjust CPU target based on cost
+    const newCpuTarget = cpuTarget; // Adjust CPU target based on cost
     
     // Update the HPA configuration if needed
-    if (costExceedsThreshold) {
-        await updateHPAThreshold(hpaName, namespace, newCpuTarget);
-    }
+    // if (costExceedsThreshold) {
+    //     await updateHPAThreshold(hpaName, namespace, newCpuTarget);
+    // }
+    await updateHPAThreshold(hpaName, namespace, newCpuTarget)
 }
 
 // Need to periodically call this function?
