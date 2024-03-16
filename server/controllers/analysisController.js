@@ -1,6 +1,5 @@
 const analysisController = {};
-const { JSONPath } = require('jsonpath');
-const k8s = require('@kubernetes/client-node');
+const k8s = require("@kubernetes/client-node");
 
 // Load kubeconfig from default location
 const kubeConfig = new k8s.KubeConfig();
@@ -9,22 +8,22 @@ kubeConfig.loadFromDefault();
 // Create Kubernetes API client
 const k8sApi = kubeConfig.makeApiClient(k8s.CoreV1Api);
 
+analysisController.getRunningPods = async (req, res, next) => {
+  try {
+    const namespace = "php-namespace";
+    console.log(">>> namespace: ", namespace);
+    const podMetrics = await k8sApi.listNamespacedPod(namespace);
+    const podList = podMetrics.body.items;
 
-analysisController.getCPUdata = async (req, res, next) => {
-    try {
-        const namespace = "kube-system";
-        const podMetrics = await k8sApi.listNamespacedPod(namespace);
-        const podList = podMetrics.body.items;
-
-        podList.forEach((pod) => {
-            const podName = pod.metadata.name;
-            const podUsage = pod.podUsage.cpu || '0';
-            console.log(`Pod: ${podName}, CPU Usage: ${podUsage}`);
-        })
-        return next();
-    } catch (error) {
-        return next("Error in analysisController.getCPUdata:  " + JSON.stringify(err));
-    }
-}
+    const runningPods = podList.filter((pod) => pod.status.phase === "Running");
+    console.log(">>> running Pods: ", runningPods.length);
+    res.locals.runningPods = runningPods.length;
+    return next();
+  } catch (error) {
+    return next(
+      "Error in analysisController.getRunningPods:  " + JSON.stringify(error)
+    );
+  }
+};
 
 module.exports = analysisController;
