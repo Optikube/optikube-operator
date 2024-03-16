@@ -1,8 +1,8 @@
 const router = require("express").Router();
 const analysisController = require("../controllers/analysisController");
 
-router.get("/cpu", analysisController.getCPUdata, (req, res) => {
-    return res.status(200);
-})
+router.get("/runningPods", analysisController.getRunningPods, (req, res) => {
+    res.status(200).json(res.locals.runningPods);
+});
 
 module.exports = router;
