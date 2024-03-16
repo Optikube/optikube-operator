@@ -10,7 +10,7 @@ const k8sApi = kubeConfig.makeApiClient(k8s.CoreV1Api);
 
 analysisController.getRunningPods = async (req, res, next) => {
   try {
-    const namespace = "kube-system";
+    const namespace = "php-namespace";
     console.log(">>> namespace: ", namespace);
     const podMetrics = await k8sApi.listNamespacedPod(namespace);
     const podList = podMetrics.body.items;

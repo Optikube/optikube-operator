@@ -55,6 +55,8 @@ const Analysis = () => {
     }
   };
 
+  // [index: value]
+
   useEffect(() => {
     fetchNoPods(); // Initial fetch
     const intervalId = setInterval(fetchNoPods, 10000); // Fetch data every 10 seconds
