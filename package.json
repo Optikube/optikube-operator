@@ -1,17 +1,45 @@
 {
+  "name": "optikube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "server": "",
-    "start": "node server/server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "@kubernetes/client-node": "^0.20.0",
-    "axios": "^1.6.7",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.18.3",
-    "node": "^21.6.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oslabs-beta/OptiKube"
+  },
+  "keywords": ["optikube", "OptiKube"],
+  "author": "OptiKube Team",
+  "contributors": [
+    {
+      "name": "Andy Guajardo",
+      "email": "andy@example.com"
+    },
+    {
+      "name": "Cheryl Lee",
+      "email": "cheryl@example.com"
+    },
+    {
+      "name": "George Huang",
+      "email": "george@example.com"
+    },
+    {
+      "name": "James Shea",
+      "email": "JamesSheaDev@users.noreply.github.com"
+    },
+    {
+      "name": "Josh Barajias",
+      "email": "josh@example.com"
+    }
+  ],
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "front-end",
+    "metrics-adapter",
+    "operator"
+  ]
 }
+
