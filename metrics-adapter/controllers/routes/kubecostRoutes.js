@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const kubecostController = require('../controllers/kubecostClientController.js');
+const kubecostController = require('../../metrics-adapter/controllers/kubecostClientController.js');
 
 
 //pods tend to die, may need to change out w new pod name
