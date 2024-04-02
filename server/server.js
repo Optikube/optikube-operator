@@ -1,8 +1,8 @@
 const express = require('express');
 const { evaluateCostAndUpdateHPA } = require('./operator')
+const Redis = require("redis");
 
 const app = express();
-
 const port = 8080;
 
 const kubecostRoutes = require('./routes/kubecostRoutes.js');
@@ -10,6 +10,10 @@ const analysisRoutes = require ('./routes/analysisRoutes.js');
 const axios = require('axios');
 const hostname = '0.0.0.0';
 const PORT = 8080;
+
+const redisClient = Redis.createClient();
+const DEFAULT_EXPIRATION = 3600;
+
 
 let isRunning = false;
 // let costExceedsThreshold = false;
