@@ -53,4 +53,31 @@ kedaController.createScaledObject = async (req, res, next) => {
     }
 }
 
+kedaController.updateScaledObject = async (req, res, next) => {
+    const patchPayload = {
+        // Payload to update scaled object
+    }
+    try {
+        const response = await k8sApi.patchNamespacedCustomObject(
+            'keda.sh',
+            'v1alpha1',
+            req.body.targetNamespace,
+            'scaledobjects',
+            req.body.name,
+            patchPayload,
+            undefined,
+            undefined,
+            undefined,
+            { headers: { 'Content-Type': 'application/merge-patch+json' } }
+        )
+        return next();
+    } catch(err) {
+        return next({
+            log: "Error occurred in kedaController.createScaledObject",
+            status: 400,
+            message: { err },
+        })
+    }
+}
+
 module.exports = kedaController;
