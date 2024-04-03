@@ -53,6 +53,27 @@ kedaController.createScaledObject = async (req, res, next) => {
     }
 }
 
+kedaController.readScaledObject = async (req, res, next) => {
+    try {
+        const { body } = await k8sApi.getNamespacedCustomObject(
+            'keda.sh',
+            'v1alpha1',
+            req.body.targetNamespace,
+            'scaledobjects',
+            req.body.name // name of ScaledObject (we probably need to standardize naming)
+        )
+        console.log(body);
+        res.locals.keda = body;
+        return next();
+    } catch(err) {
+        return next({
+            log: "Error occurred in kedaController.readScaledObject",
+            status: 400,
+            message: { err },
+        })
+    }
+}
+
 kedaController.updateScaledObject = async (req, res, next) => {
     const patchPayload = {
         // Payload to update scaled object
@@ -79,5 +100,26 @@ kedaController.updateScaledObject = async (req, res, next) => {
         })
     }
 }
+
+kedaController.deleteScaledObject = async (req, res, next) => {
+    try {
+        const response = await k8sApi.deleteScaledObject(
+            'keda.sh',
+            'v1alpha1',
+            req.body.targetNamespace,
+            'scaledobjects',
+            req.body.name,
+            {}
+        );
+    } catch(err) {
+        return next({
+            log: "Error occurred in kedaController.deleteScaledObject",
+            status: 400,
+            message: { err },
+        })
+    }
+}
+
+
 
 module.exports = kedaController;
