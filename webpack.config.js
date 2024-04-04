@@ -5,7 +5,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-  entry: path.join(__dirname, "client", "index.js"),
+  entry: path.join(__dirname, "front-end", "index.js"),
   output: {
     path: path.resolve(__dirname, "build"),
   },
