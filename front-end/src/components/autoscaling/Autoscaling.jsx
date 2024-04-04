@@ -2,21 +2,29 @@ import React, { useState, useEffect } from 'react';
 import Deployment from './Deployment';
 
 const Autoscaling = () => {
-    useEffect(async () => {
-        try {
-            const response = await fetch('/apps/deployments');
-            const data = await response.json();
-            const deployments = data.map((item, index) => <Deployment deployment={item} key={index}></Deployment>)
-            return (
-                <>
-                    <span>Deployments:</span>
-                    {deployments}
-                </>
-            )
-        } catch(err) {
-            console.log(err)
-        }
+    const [deployments, setDeployments] = useState([]);
+    useEffect(() => {
+        const fetchDeployments = async () => {
+            try {
+                const response = await fetch('/apps/deployments');
+                const { metadata } = await response.json();
+                const deploymentItems = metadata.map((item, index) => 
+                    <Deployment deployment={item} key={index} />
+                );
+                setDeployments(deploymentItems);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+        fetchDeployments();
     }, []);
+
+    return (
+        <>
+            <span>Deployments:</span>
+            {deployments}
+        </>
+    );
 }
 
 export default Autoscaling
