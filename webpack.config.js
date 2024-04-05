@@ -7,7 +7,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 module.exports = {
   entry: path.join(__dirname, "front-end", "index.js"),
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: path.resolve(__dirname, "front-end","build"),
   },
   mode: process.env.NODE_ENV,
   module: {
@@ -38,13 +38,14 @@ module.exports = {
   plugins: [
     new Dotenv(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "client", "index.html"),
+      template: path.join(__dirname, "front-end", "index.html"),
     }),
     isDevelopment && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
   devServer: {
     static: {
-      directory: path.join(__dirname, "/build"),
+      // directory: path.join(__dirname, "/build"), 
+      directory: path.join(__dirname, "front-end", "/build"),
       publicPath: "/",
     },
     hot: true,
