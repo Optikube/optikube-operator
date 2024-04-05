@@ -5,11 +5,12 @@ const app = express();
 
 const port = 8080;
 
-const kubecostRoutes = require('./routes/kubecostRoutes.js');
-const analysisRoutes = require ('./routes/analysisRoutes.js');
+// const kubecostRoutes = require('/metrics-adapter/controllers/routes/kubecostRoutes.js');
+
+// const analysisRoutes = require ('/metrics-adapter/controllers/routes/analysisRoutes.js');
 const axios = require('axios');
 const hostname = '0.0.0.0';
-const PORT = 8080;
+// const PORT = 8080;
 
 let isRunning = false;
 // let costExceedsThreshold = false;
@@ -20,52 +21,52 @@ let newMinReplicasTarget;
 let newMaxReplicasTarget;
 
 
-app.use('/api/analysis', analysisRoutes);
-app.use('/api',kubecostRoutes);
+// app.use('/api/analysis', analysisRoutes);
+// app.use('/api',kubecostRoutes);
 app.get('/', (req, res) =>{
   res.send('8080 is working and ready to goooooooo!');
 });
 
-const continuousEvaluateCostAndUpdateHPA = async () => {
-  if (!isRunning) return;
-  else {
-    await evaluateCostAndUpdateHPA(cpuTarget, newMinReplicasTarget, newMaxReplicasTarget);
-    console.log('Evaluating cost and updating HPA.')
-    setTimeout(continuousEvaluateCostAndUpdateHPA, 1000)
-  }
-}
-
-app.get('/start', (req, res) => {
-  // invoke cost calculation and invoke hpa autoscale
-  if (!isRunning) {
-    isRunning = true;
-    continuousEvaluateCostAndUpdateHPA().catch(err => console.error(err));
-    console.log('Autoscaling started.')
-    res.status(200).send('Autoscaling started.');
-  } else {
-    console.log('Autoscaling already running.')
-    res.status(200).send('Autoscaling already running.');
-  }
-})
-
-app.get('/stop', (req, res) => {
-  isRunning = false;
-  console.log("Autoscaling stopped.")
-  res.status(200).send('Autoscaling stopped.')
-})
-
-app.get('/adjust', (req, res) => {
-//   if (req.query.costExceedsThreshold !== undefined) {
-//     costExceedsThreshold = req.query.costExceedsThreshold === 'true';
+// const continuousEvaluateCostAndUpdateHPA = async () => {
+//   if (!isRunning) return;
+//   else {
+//     await evaluateCostAndUpdateHPA(cpuTarget, newMinReplicasTarget, newMaxReplicasTarget);
+//     console.log('Evaluating cost and updating HPA.')
+//     setTimeout(continuousEvaluateCostAndUpdateHPA, 1000)
+//   }
 // }
-//   lowerLimit = req.query.lowerLimit ? parseInt(req.query.lowerLimit) : lowerLimit;
-//   upperLimit = req.query.upperLimit ? parseInt(req.query.upperLimit) : upperLimit;
-  cpuTarget = parseInt(req.query.cpuTarget) || cpuTarget;
-  newMinReplicasTarget = parseInt(req.query.newMinReplicasTarget) || undefined;
-  newMaxReplicasTarget = parseInt(req.query.newMaxReplicasTarget) || undefined;
-  console.log('Parameters adjusted.')
-  res.status(200).send('Parameters adjusted.')
-})
+
+// app.get('/start', (req, res) => {
+//   // invoke cost calculation and invoke hpa autoscale
+//   if (!isRunning) {
+//     isRunning = true;
+//     continuousEvaluateCostAndUpdateHPA().catch(err => console.error(err));
+//     console.log('Autoscaling started.')
+//     res.status(200).send('Autoscaling started.');
+//   } else {
+//     console.log('Autoscaling already running.')
+//     res.status(200).send('Autoscaling already running.');
+//   }
+// })
+
+// app.get('/stop', (req, res) => {
+//   isRunning = false;
+//   console.log("Autoscaling stopped.")
+//   res.status(200).send('Autoscaling stopped.')
+// })
+
+// app.get('/adjust', (req, res) => {
+// //   if (req.query.costExceedsThreshold !== undefined) {
+// //     costExceedsThreshold = req.query.costExceedsThreshold === 'true';
+// // }
+// //   lowerLimit = req.query.lowerLimit ? parseInt(req.query.lowerLimit) : lowerLimit;
+// //   upperLimit = req.query.upperLimit ? parseInt(req.query.upperLimit) : upperLimit;
+//   cpuTarget = parseInt(req.query.cpuTarget) || cpuTarget;
+//   newMinReplicasTarget = parseInt(req.query.newMinReplicasTarget) || undefined;
+//   newMaxReplicasTarget = parseInt(req.query.newMaxReplicasTarget) || undefined;
+//   console.log('Parameters adjusted.')
+//   res.status(200).send('Parameters adjusted.')
+// })
 
 app.listen(port, () => {
   console.log(`Server listening on port: ${port}...`);

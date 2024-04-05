@@ -5,11 +5,13 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-  entry: path.join(__dirname, "front-end", "index.js"),
+  // entry: path.join(__dirname, "front-end/src", "index.js"),
+  entry: path.resolve(__dirname, "front-end/src/index.js"),
   output: {
     path: path.resolve(__dirname, "front-end","build"),
   },
   mode: process.env.NODE_ENV,
+  cache: false,
   module: {
     rules: [
       {
@@ -27,7 +29,7 @@ module.exports = {
       },
       {
         test: /\.(css|scss)$/i,
-        use: ["style-loader", "css-loader", "sass-loader", "postcss-loader"],
+        use: ["sass-loader", "postcss-loader",  "css-loader", "style-loader"],
       },
       {
         test: /\.(png|jpe?g|JPG)$/,
