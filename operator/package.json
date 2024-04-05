@@ -11,8 +11,10 @@
   "description": "",
   "dependencies": {
     "@kubernetes/client-node": "^0.20.0",
+    "axios": "^1.6.8",
     "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
-    "node": "^18.20.0"
+    "node": "^18.20.0",
+    "redis": "^4.6.13"
   }
 }

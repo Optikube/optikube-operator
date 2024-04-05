@@ -1,15 +1,32 @@
 const express = require('express');
-const { evaluateCostAndUpdateHPA } = require('./operator')
+const path = require('path');
+const { evaluateCostAndUpdateHPA } = require('./operators/operator')
 
 const app = express();
-
 const PORT = 8080;
 
+// Imports for routers here
+const appsRouter = require('./api/router');
 
+//Start server.
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}...`);
 });
 
+// Parse all responses in JSON
+app.use(express.json());
+
+// Route handlers
+app.use('/apps/', appsRouter)
+
+
+
+// Catch all route handler for any requests to unknown route.
+app.use((req, res) => {
+  res.sendStatus(404);
+})
+
+// Global error handler
 app.use((err, req, res, next) => {
   const defaultErr = {
     log: "Express error handler caught unknown middleware error",

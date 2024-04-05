@@ -1,0 +1,1 @@
+// Applies the optimization strategy to kubenetes infrastucture
