@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const analysisController = {};
 const k8s = require("@kubernetes/client-node");
 
@@ -28,7 +30,10 @@ analysisController.getRunningPods = async (req, res, next) => {
 
 analysisController.getCPU = async (req, res, next) => {
   try {
-    
+    // http://localhost:9090/assets/model/allocation
+    const test = await axios.get(
+      "http://localhost:9090/model/allocation?window=3d&offset=20&limit=10&accumulate=true"
+    );
   } catch (error) {
 
   }
