@@ -1,4 +1,4 @@
-// Simple local data store for optimization presets.
+// Simple local data store for optimization settings.
 // This will dictate what optimization logic is enacted and on which deployments.
 
 const redis = require('redis');

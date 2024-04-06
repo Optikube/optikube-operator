@@ -8,6 +8,9 @@ const PORT = 8080;
 // Imports for routers here
 const appsRouter = require('./api/router');
 
+// Start the optimization scheduler wehn the application starts.
+optimizationScheduler.start()
+
 //Start server.
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}...`);
@@ -17,7 +20,7 @@ app.listen(PORT, () => {
 app.use(express.json());
 
 // Route handlers
-app.use('/apps/', appsRouter)
+app.use('/api/', appsRouter)
 
 
 
