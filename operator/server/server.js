@@ -3,7 +3,7 @@ const { evaluateCostAndUpdateHPA } = require('./operator')
 
 const app = express();
 
-const port = 8080;
+const PORT = 8080;
 
 // const kubecostRoutes = require('/metrics-adapter/controllers/routes/kubecostRoutes.js');
 
@@ -23,7 +23,7 @@ let newMaxReplicasTarget;
 
 // app.use('/api/analysis', analysisRoutes);
 // app.use('/api',kubecostRoutes);
-app.get('/', (req, res) =>{
+app.use('/', (req, res) =>{
   res.send('8080 is working and ready to goooooooo!');
 });
 
@@ -68,9 +68,14 @@ app.get('/', (req, res) =>{
 //   res.status(200).send('Parameters adjusted.')
 // })
 
-app.listen(port, () => {
-  console.log(`Server listening on port: ${port}...`);
+app.use("*", (req, res) => {
+  res.status(404).send("Page not found");
 });
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port: ${PORT}...`);
+});
+
 
 app.use((err, req, res, next) => {
   const defaultErr = {

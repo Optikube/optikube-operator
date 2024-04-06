@@ -1,16 +1,19 @@
 const path = require("path");
 const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const isDevelopment = process.env.NODE_ENV !== 'production';
+const {
+  ReactRefreshWebpackPlugin,
+} = require("@pmmmwh/react-refresh-webpack-plugin");
+
+const isDevelopment = process.env.NODE_ENV;
 
 module.exports = {
-  // entry: path.join(__dirname, "front-end/src", "index.js"),
-  entry: path.resolve(__dirname, "front-end/src/index.js"),
+  entry: path.resolve(__dirname, "./front-end/index.js"),
   output: {
-    path: path.resolve(__dirname, "front-end","build"),
+    path: path.resolve(__dirname, "./build"),
+    filename: "bundle.js",
   },
-  mode: process.env.NODE_ENV,
+  mode: isDevelopment ? "development" : "production",
   cache: false,
   module: {
     rules: [
@@ -28,26 +31,21 @@ module.exports = {
         },
       },
       {
-        test: /\.(css|scss)$/i,
-        use: ["sass-loader", "postcss-loader",  "css-loader", "style-loader"],
+        test: /\.s?css$/,
+        use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"],
+        exclude: /node_modules/,
       },
       {
-        test: /\.(png|jpe?g|JPG)$/,
+        test: /\.(jpg|jpeg|png|ttf|svg|gif)$/,
         type: "asset/resource",
+        exclude: /node_modules/,
       },
     ],
   },
-  plugins: [
-    new Dotenv(),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "front-end", "index.html"),
-    }),
-    isDevelopment && new ReactRefreshWebpackPlugin(),
-  ].filter(Boolean),
   devServer: {
     static: {
-      // directory: path.join(__dirname, "/build"), 
-      directory: path.join(__dirname, "front-end", "/build"),
+      // directory: path.join(__dirname, "/build"),
+      directory: path.join(__dirname, "./build"),
       publicPath: "/",
     },
     hot: true,
@@ -55,12 +53,18 @@ module.exports = {
     compress: true,
     port: 3005,
     proxy: {
-      "/api": {
+      "/": {
         target: "http://localhost:8080",
       },
     },
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+        title: "optikoob",
+        template: 'index.html'
+    })
+],
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".gif", ".png", ".svg"],
   },
 };
