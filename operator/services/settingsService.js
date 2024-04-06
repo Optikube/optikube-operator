@@ -1,6 +1,6 @@
-const redisClient = require('../data/redisClient');
+// Performs functions like saving optimization settings for redis cache.
 
-const redisClient = require('../dal/redisClient');
+const redisClient = require('../data/redisClient');
 
 class SettingsService {
     // Method to save or update optimization settings
