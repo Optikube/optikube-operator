@@ -6,12 +6,14 @@ const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi)
 const kedaController = {};
 
 kedaController.createScaledObject = async (req, res, next) => {
+    const settings = req.body.settings;
+    // parse through req.body.settings to setup ScaledObject accordingly
     const scaledObject = {
         apiVersion: 'keda.sh/v1alpha',
         kind: 'ScaledObject',
         metadata: {
-            name: req.body.name,
-            namespace: req.body.targetNamespace,
+            name: req.body.deployment,
+            namespace: req.body.namespace,
         },
         spec: {
             scaleTargetRef: {
@@ -77,14 +79,15 @@ kedaController.readScaledObject = async (req, res, next) => {
 kedaController.updateScaledObject = async (req, res, next) => {
     const patchPayload = {
         // Payload to update scaled object
+        // take from req.body.settings
     }
     try {
         const response = await k8sApi.patchNamespacedCustomObject(
             'keda.sh',
             'v1alpha1',
-            req.body.targetNamespace,
+            req.body.namespace,
             'scaledobjects',
-            req.body.name,
+            req.body.deployment,
             patchPayload,
             undefined,
             undefined,
