@@ -45,11 +45,43 @@ const Deployment = props => {
         }
     }
 
+    const createKedaClick = async (event) => {
+        try {
+            const response = await fetch('KEDA ENDPOINT FOR CREATING', {
+                method: "POST",
+                body: JSON.stringify({
+                    // body
+                })
+            })
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    const deleteKedaClick = async (event) => {
+        try {
+            const response = await fetch('KEDA ENDPOINT FOR DELETING', {
+                method: "DELETE",
+                body: JSON.stringify({
+                    // body
+                })
+            })
+        } catch(err) {
+            console.log(err)
+        }
+    }
     return (
         <div>
             <span>Name: {props.deployment.name}</span>
             <span>Namespace: {props.deployment.namespace}</span>
-            <button></button>
+             {Object.keys(kedaInfo).length === 0 ? (
+                <button>Create autoscaler</button>
+             ) : (
+                <>
+                    <span>{kedaInfo}</span>
+                    <button>Update autoscaler</button>
+                </>
+             )}
         </div>
     )
 }
