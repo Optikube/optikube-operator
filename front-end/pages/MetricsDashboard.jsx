@@ -6,4 +6,4 @@ const MetricsDashboard = () => {
   )
 }
 
-export default MetricsDashboard
+export default MetricsDashboard;

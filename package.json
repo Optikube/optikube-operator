@@ -50,6 +50,7 @@
   ],
   "dependencies": {
     "@kubernetes/client-node": "^0.20.0",
+    "@radix-ui/react-navigation-menu": "^1.1.4",
     "autoprefixer": "^10.4.19",
     "axios": "^1.6.8",
     "clsx": "^2.1.0",

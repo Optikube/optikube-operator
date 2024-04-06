@@ -4,8 +4,8 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-//from tailwind docs 
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
-
+@layer components {
+  .footerItem {
+    @apply block text-gray-700 text-start no-underline font-normal leading-10 items-center align-middle gap-3 text-sm mx-4;
+  }
+}
