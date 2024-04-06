@@ -13,7 +13,41 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
 
         await settingsService.saveOptimizationSettings(namespace, deployment, settings, true)
         return next();
-    } catch (error) {
+    } catch (err) {
+        return next({
+            log: "Error occurred in settingsController.updateOptimizationSettings",
+            status: 400,
+            message: { err },
+        })
+    }
+}
+
+settingsController.deleteOptimizationSettings = async (req, res, next) => {
+    try {
+        // delete settings on user removing autoscaling
+        const namespace = req.body.namespace;
+        const deployment = req.body.deployment;
+        await settingsService.deleteOptimizationSettings(namespace, deployment)
+        return next();
+    } catch (err) {
+        return next({
+            log: "Error occurred in settingsController.updateOptimizationSettings",
+            status: 400,
+            message: { err },
+        })
+    }
+}
+
+settingsController.getOptimizationSettings = async (req, res, next) => {
+    try {
+        // delete settings on user removing autoscaling
+        const namespace = req.body.namespace;
+        const deployment = req.body.deployment;
+        const result = await settingsService.getOptimizationSettings(namespace, deployment)
+        if (result === null) throw new Error('Settings not found')
+        res.locals.result = result;
+        return next();
+    } catch (err) {
         return next({
             log: "Error occurred in settingsController.updateOptimizationSettings",
             status: 400,

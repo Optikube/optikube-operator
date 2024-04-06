@@ -32,6 +32,12 @@ class SettingsService {
         }
         return deployments;
     }
+
+    async deleteOptimizationSettings(namespace, deploymentName) {
+        const key = `namespace:${namespace}:deployment:${deploymentName}`;
+        const result = await redisClient.del(key);
+        return { success: true };
+    }
 }
 
 module.exports = new SettingsService();
