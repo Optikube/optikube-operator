@@ -10,7 +10,12 @@ class optimizationScheduler {
             try {
                 await optimizationService
             } catch (error) {
-                console.error('Error running optimization task in optimizatioScheduler:', error);
+                console.error('Error running optimization task in optimizationScheduler.', error);
+                return {
+                    succes: false,
+                    log: 'Error running optimization task in optimizationScheduler.',
+                    error: error.message
+                }
             }
         });
     }

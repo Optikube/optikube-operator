@@ -17,7 +17,7 @@ async function fetchKubecostMetrics1H (params) {
             idle: 'true',
         };
 
-        const response = await axios.getAdapter(kubecostAddress + endpoint, { params } )
+        const response = await axios.get(kubecostAddress + endpoint, { params } )
 
         // Log response data
         console.log(response.data);
@@ -26,7 +26,13 @@ async function fetchKubecostMetrics1H (params) {
         return response.data;
 
     } catch (error) {
-        console.error(`Error fetching Kubecost metrics in fetchKubecostMetrics1H function`, error)
-        return null;
+        console.error('Error fetching Kubecost metrics in fetchKubecostMetrics1H function.', error)
+        return { 
+            succes: false,
+            log: 'Error fetching Kubecost metrics in fetchKubecostMetrics1H function.',
+            error: error.message
+        }
     }
 }
+
+module.exports = fetchKubecostMetrics1H;

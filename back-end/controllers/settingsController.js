@@ -11,7 +11,7 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
         const deployment = req.body.deployment;
         const settings = req.body.settings;
 
-        await settingsService.saveOptimizationSettings(namespace, deployment, settings, true)
+        await settingsService.updateOptimizationSettings(namespace, deployment, settings, true)
         return next();
     } catch (err) {
         return next({
