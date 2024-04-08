@@ -1,7 +1,7 @@
 // Handles initiation of settings logic.
 // This is a bridge between the frontend and backend.
 
-const settingsService = require('../services/settingsService');
+const settingsService = require('../services/SettingsService');
 
 const settingsController = {};
 

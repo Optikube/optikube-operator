@@ -1,18 +1,14 @@
-const kubecostService = require('./kubecostService');
-const settingsService = require('./settingsService');
+const kubecostService = require('./KubecostService');
+const settingsService = require('./SettingsService');
 
 class OptimizationService {
 
     constructor () {
         this.strategies = {
-            cost: new costEfficientStrategy();
-            mixed: new mixedStrategy();
-            performance: new performanceStrategy();
+            cost: new costEfficientStrategy(),
+            mixed: new mixedStrategy(),
+            performance: new performanceStrategy(),
         }
-    }
-
-    selectOptimizationStrategy(optimizationScore) {
-        if (optimizationScore <= )
     }
 
     calculateWeightedScore(userInput, categoryWeights, settingScores) {
@@ -45,7 +41,7 @@ class OptimizationService {
         }
     }
 
-    executeHourlyOptimization () {
+    async executeHourlyOptimization () {
         try {
 
             // Get Kubecost data
