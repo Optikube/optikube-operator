@@ -29,7 +29,6 @@ class SettingsService {
             return { succes: false, error: error.message}
         }
     }
-
     // Retrieves current optimization - potential need for front end displayer as well as when scheduled optimization occurs.
     async getOptimizationSettings(namespace, deploymentName) {
         try {
@@ -43,7 +42,7 @@ class SettingsService {
         }
     }
     // Retreieves all deployments tagged for hourly optimization.
-    async listDeploymentsForOptimization() {
+    async getDeploymentsForOptimization() {
         const globalOptimizeSetKey = `global:optimization_deployments`;
 
         try {
@@ -62,14 +61,17 @@ class SettingsService {
             console.error(`Error listing deployments for optimization`, error)
             return { succes: false, error: error.message}
         }
-
-
     }
     // Deletes existing optimization settings - will work in tandem with deleting KEDA Scaled Object. 
     async deleteOptimizationSettings(namespace, deploymentName) {
         try {
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
+            const globalOptimizeSetKey = `global:optimization_deployments`;
+            const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
+            // Delete deployment settings and record.
             const result = await redisClient.del(key);
+            // Remove deployment from global optimization set.
+            await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
             // In redis if the del method works it returns the number of keys deleted, in this case 1.
             return { success: result === 1, log: 'Optimization settings successfully deleted.'  };
         } catch (error) {
