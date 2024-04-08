@@ -4,11 +4,24 @@ const redisClient = require('../data/redisClient');
 
 class SettingsService {
     // Method to save or update optimization settings
-    async updateOptimizationSettings(namespace, deploymentName, settings, optimizeFlag) {
+    async updateOptimizationSettings(namespace, deploymentName, settings, optimizationScore, optimizeFlag) {
         try {
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
-            const value = JSON.stringify({ settings, optimize: optimizeFlag});
+            const globalOptimizeSetKey = `global:optimization_deployments`
+
+            const value = JSON.stringify({ settings, optimizationScore, optimize: optimizeFlag, });
             const result = await redisClient.set(key, value);
+
+            const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
+
+            if (optimizeFlag) {
+                await redisClient.sAdd(globalOptimizeSetKey, qualifiedDeploymentName)
+            }
+
+            if (!optimizeFlag) {
+                await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName)
+            }
+
             // In redis if the set method is successful it returns  "OK".
             return { success: result === 'OK', log: 'Optimization settings successfully updated.' };
         } catch (error) {
@@ -29,20 +42,28 @@ class SettingsService {
             return { succes: false, error: error.message }
         }
     }
+    // Retreieves all deployments tagged for hourly optimization.
+    async listDeploymentsForOptimization() {
+        const globalOptimizeSetKey = `global:optimization_deployments`;
 
-    async listDeploymentsForOptimization(namespace) {
-        const pattern = `namespace:${namespace}:deployment:*`;
-        const keys = await redisClient.keys(pattern);
-        const deployments = [];
-        for (const key of keys) {
-            const value = await redisClient.get(key);
-            const { settings, optimize } = JSON.parse(value);
-            if (optimize) {
-                const [, , , deploymentName] = key.split(':'); // Extract deployment name from key
-                deployments.push({ deploymentName, settings });
+        try {
+            const qualifiedDeploymentNames = await redisClient.sMembers(globalOptimizeSetKey);
+            const deployments = [];
+
+            for(const qualifiedDeployment of qualifiedDeploymentNames) {
+                const [namespace, deploymentName] = qualifiedDeployment.split(":");
+                const settings = await this.getOptimizationSettings(namespace, deploymentName);
+                if (settings && settings.optimize) {
+                    deployments.push({ namespace, deploymentName, settings })
+                }
             }
+            return deployments;
+        } catch (error) {
+            console.error(`Error listing deployments for optimization`, error)
+            return { succes: false, error: error.message}
         }
-        return deployments;
+
+
     }
     // Deletes existing optimization settings - will work in tandem with deleting KEDA Scaled Object. 
     async deleteOptimizationSettings(namespace, deploymentName) {

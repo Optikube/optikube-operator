@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const { evaluateCostAndUpdateHPA } = require('./operators/operator')
+const { evaluateCostAndUpdateHPA } = require('./operators/operator');
+const optimizationScheduler = require('./services/optimizationScheduler');
 
 const app = express();
 const PORT = 8080;

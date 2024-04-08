@@ -1,14 +1,14 @@
 // Schedules optimization of kubernetes resources each hour.
 
 const cron = require('node-cron');
-const optimizationService = 
+const optimizationService = require('./optimizationService');
 
-class optimizationScheduler {
+class OptimizationScheduler {
     start() {
         cron.schedule('0 * * * *', async () => {
             console.log('Running resource optimization every hour on the hour.')
             try {
-                await optimizationService
+                await optimizationService.executeHourlyOptimization()
             } catch (error) {
                 console.error('Error running optimization task in optimizationScheduler.', error);
                 return {

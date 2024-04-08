@@ -12,11 +12,11 @@ router.get('/deployments', appsController.viewAllDeployments, (req, res) => {
 
 // CRUD routes
 
-router.patch('/settings/update', settingsController.updateOptimizationSettings, kedaController.updateScaledObject, (req, res) => {
+router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings,kedaController.updateScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings updated successfully."})
 })
 
-router.post('/settings/create', settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
+router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings created successfully and autoscaling started."})
 })
 

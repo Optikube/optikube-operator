@@ -10,8 +10,9 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
         const namespace = req.body.namespace;
         const deployment = req.body.deployment;
         const settings = req.body.settings;
+        const optimizationScore = req.weightedOptimizationScore
 
-        await settingsService.updateOptimizationSettings(namespace, deployment, settings, true)
+        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true)
         return next();
     } catch (err) {
         return next({

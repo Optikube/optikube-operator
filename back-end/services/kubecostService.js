@@ -19,3 +19,5 @@ class KubecostService {
 
     }
 }
+
+module.exports = new KubecostService();
