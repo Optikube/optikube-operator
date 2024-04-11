@@ -1,5 +1,5 @@
-const kubecostService = require('./KubecostService');
-const settingsService = require('./SettingsService');
+const kubecostService = require('./kubecostService');
+const settingsService = require('./settingsService');
 
 class OptimizationService {
 
@@ -11,7 +11,7 @@ class OptimizationService {
         }
     }
 
-    calculateWeightedScore(userInput, categoryWeights, settingScores) {
+    async calculateWeightedScore(userInput, categoryWeights, settingScores) {
         let weightedScore = 0;
         let totalWeight = 0;
         try {
