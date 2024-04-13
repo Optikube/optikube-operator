@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "noImplicitAny": true
+  },
+  "include": ["front-end/**/*"]
+}
