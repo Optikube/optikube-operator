@@ -6,8 +6,8 @@ class KubecostService {
     async getKubecostMetricsForOptimization() {
         try {
             const response = await fetchKubecostMetrics1H();
-            // Transform data pull as necessary before optimization service takes over.
-
+            // It's formatted as an array of objects but only has one object with all deployments by namespace?
+            return response.data[0];
         } catch (error) {
             console.error('Error getting Kubecost metrics in getKubecostMetricsForOptimization.', error);
             return {

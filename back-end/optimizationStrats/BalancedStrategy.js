@@ -1,7 +1,7 @@
 const OptimizationStrategyBase = require('./OptimizationStrategyBase');
 const deploymentOperator = require('../operators/deploymentOperator');
 
-class CostEfficientStrategy extends OptimizationStrategyBase {
+class BalancedStrategy extends OptimizationStrategyBase {
     async optimize(namespace, deploymentName, settings, deploymentKubecostData) {
         try {
             // Looks at Kubecost average utilization to be 40-60% of the current average utilization for the past hour
@@ -11,10 +11,10 @@ class CostEfficientStrategy extends OptimizationStrategyBase {
             const cpuUtilizationAverage = cpuCoreUsageAverage / cpuCoreRequestAverage
 
             // correct the utilization if out of bounds
-            if (cpuUtilizationAverage < 0.7  || cpuUtilizationAverage > 0.8) {
-                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.75, minCpuRequest)
+            if (cpuUtilizationAverage < 0.5  || cpuUtilizationAverage > 0.7) {
+                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.6, minCpuRequest)
                 // Potentially need to update scaled object target utilizaton to 50% to be sure if no already set initially
-                const cpuNewLimit = await this.calculateNewLimit(cpuNewRequest, 1.3)
+                const cpuNewLimit = await this.calculateNewLimit(cpuNewRequest, 2)
                 const updatedResources = {
                     requests: { cpu: `${cpuNewRequest}m` },
                     limits: { cpu: `${cpuNewLimit}m` }
@@ -23,14 +23,14 @@ class CostEfficientStrategy extends OptimizationStrategyBase {
                 await deploymentOperator.updateDeploymentResources(namespace, deploymentName, updatedResources);
             }
         } catch (error) {
-            console.error('Error getting executing balanced optimization strategy in CostEfficientStrategy.optimize.', error);
+            console.error('Error getting executing balanced optimization strategy in BalancedStrategy.optimize.', error);
             return {
                 success: false,
-                log: 'Error getting executing CostEfficientStrategy.optimize.',
+                log: 'Error getting executing BalancedStrategy.optimize.',
                 error: error.message 
             }
         }
     }
 }
 
-module.exports = new CostEfficientStrategy();
+module.exports = new BalancedStrategy();

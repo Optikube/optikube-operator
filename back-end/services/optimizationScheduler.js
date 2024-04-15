@@ -1,5 +1,4 @@
 // Schedules optimization of kubernetes resources each hour.
-
 const cron = require('node-cron');
 const optimizationService = require('./optimizationService')
 

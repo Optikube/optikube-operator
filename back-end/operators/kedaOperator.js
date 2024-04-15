@@ -3,8 +3,6 @@ const kc = new k8s.KubeConfig();
 kc.loadFromCluster();
 const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi)
 
-const kedaOperator = {};
-
 class KedaOperator {
     async createScaledObject(scaledObject) {
         try {
