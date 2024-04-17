@@ -14,9 +14,9 @@ const Footer = () => {
               • User{menu === "User" ? <hr className="bg-secwhite" /> : <></>}
             </Link>
           </li>
-          <li className="footerItem" onClick={() => setMenu("Metrics")}>
-            <Link style={{ textDecoration: "none" }} to={"/metrics"}>
-              • Metrics{menu === "Metrics" ? <hr /> : <></>}
+          <li className="footerItem" onClick={() => setMenu("Metrixes")}>
+            <Link style={{ textDecoration: "none" }} to={"/metrixes"}>
+              • Metrixes{menu === "Metrixes" ? <hr /> : <></>}
             </Link>
           </li>
           <li className="footerItem" onClick={() => setMenu("HPA")}>

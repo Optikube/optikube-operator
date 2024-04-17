@@ -40,6 +40,11 @@ module.exports = {
         type: "asset/resource",
         exclude: /node_modules/,
       },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: ["ts-loader"],
+      },
     ],
   },
   devServer: {
@@ -60,11 +65,15 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-        title: "optikoob",
-        template: 'index.html'
+      title: "optikoob",
+      template: "index.html",
     })
-],
+  ],
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".gif", ".png", ".svg"],
+    alias: {
+      "next/link": path.resolve(__dirname, "node_modules/next/link"),
+      "@": path.resolve(__dirname, "public/utils/aceUI"),
+    },
   },
 };
