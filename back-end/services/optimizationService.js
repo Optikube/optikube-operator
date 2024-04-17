@@ -28,7 +28,7 @@ class OptimizationService {
         } catch (error) {
             console.error('Error getting calculating weightedOptimzationScore.', error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error getting calculating weightedOptimzationScore.',
                 error: error.message 
             }
@@ -70,7 +70,7 @@ class OptimizationService {
         } catch (error) {
             console.error('Error getting executing optimizations in excuteHourlyOptimization.', error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error getting excecuting excuteHourlyOptimization.',
                 error: error.message 
             }

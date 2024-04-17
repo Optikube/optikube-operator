@@ -11,7 +11,7 @@ class KedaOperator {
         } catch (error) {
             console.error(`Error creating scaled object in createScaledObject within kedaOperator.`, error);
             return {
-                succes: false,
+                success: false,
                 log: `Error creating scaled object in createScaledObject within kedaOperator.`,
                 error: error.message 
             }
@@ -25,7 +25,7 @@ class KedaOperator {
         } catch (error) {
             console.error(`Error creating scaled object in createScaledObject within kedaOperator.`, error);
             return {
-                succes: false,
+                success: false,
                 log: `Error creating scaled object in createScaledObject within kedaOperator.`,
                 error: error.message 
             }
@@ -39,7 +39,7 @@ class KedaOperator {
         } catch (error) {
             console.error(`Error updating scaled object in updateScaledObject within kedaOperator.`, error);
             return {
-                succes: false,
+                success: false,
                 log: `Error updating scaled object in updateScaledObject within kedaOperator.`,
                 error: error.message 
             }
@@ -53,7 +53,7 @@ class KedaOperator {
         } catch (error) {
             console.error(`Error deleting scaled object in deleteScaledObject within kedaOperator.`, error);
             return {
-                succes: false,
+                success: false,
                 log: `Error deleting scaled object in deleteScaledObject within kedaOperator.`,
                 error: error.message 
             }

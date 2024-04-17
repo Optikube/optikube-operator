@@ -18,19 +18,18 @@ class KedaService {
                         name: settings.targetName
                     }
                 },
-                pollingInterval: settings.pollingInterval, // We might be able to caclulate all this similar to the target CPU utilization?
-                cooldownPeriod: settings.cooldownPeriod,
-                minReplicaCount: settings.minReplicaCount,
-                maxReplicaCount: settings.maxReplicaCount,
+                // pollingInterval: settings.pollingInterval, // We might be able to caclulate all this similar to the target CPU utilization?
+                // cooldownPeriod: settings.cooldownPeriod,
+                // minReplicaCount: settings.minReplicaCount,
+                // maxReplicaCount: settings.maxReplicaCount,
                 triggers: [
                     {
-                        type: 'metrics-api',
+                        type: 'cpu',
+                        metricType: 'Utilization',
                         metadata:
                             {
-                                targetValue: "TARGET VALUE",
-                                url: "API URL", // We don't want to hard code this in ideally, so we'll need to get the service endpoint
-                                valueLocation: "VALUE LOCATION",
-                                method: "GET",
+                                type: "Utilization",
+                                value: "50", // We don't want to hard code this in ideally, so we'll need to get the service endpoint
                             },
                     },
                 ],
@@ -40,7 +39,7 @@ class KedaService {
         } catch (error) {
             console.error('Error creating scaled object in kedaService.', error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error creating scaled object in kedaService.',
                 error: error.message
             }
@@ -61,7 +60,7 @@ class KedaService {
         } catch (error) {
             console.error('Error reading scaled object in kedaService.', error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error reading scaled object in kedaService.',
                 error: error.message
             } 
@@ -110,7 +109,7 @@ class KedaService {
         } catch (error) {
             console.error('Error deleting scaled object in kedaService.', error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error deleting scaled object in kedaService.',
                 error: error.message
             } 

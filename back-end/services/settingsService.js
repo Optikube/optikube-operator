@@ -26,7 +26,7 @@ class SettingsService {
             return { success: result === 'OK', log: 'Optimization settings successfully updated.' };
         } catch (error) {
             console.error(`Error saving optimization settings for ${key}`, error)
-            return { succes: false, error: error.message}
+            return { success: false, error: error.message}
         }
     }
     // Retrieves current optimization - potential need for front end displayer as well as when scheduled optimization occurs.
@@ -38,7 +38,7 @@ class SettingsService {
             return result ? JSON.parse(result) : null;
         } catch (error) {
             console.error(`Error fetching optimization settings for ${key}`, error)
-            return { succes: false, error: error.message }
+            return { success: false, error: error.message }
         }
     }
     // Retreieves all deployments tagged for hourly optimization.
@@ -59,7 +59,7 @@ class SettingsService {
             return deployments;
         } catch (error) {
             console.error(`Error listing deployments for optimization`, error)
-            return { succes: false, error: error.message}
+            return { success: false, error: error.message}
         }
     }
     // Deletes existing optimization settings - will work in tandem with deleting KEDA Scaled Object. 
@@ -76,7 +76,7 @@ class SettingsService {
             return { success: result === 1, log: 'Optimization settings successfully deleted.'  };
         } catch (error) {
             console.error(`Error deleting optimization settings for ${key}`, error)
-            return { succes: false, error: error.message}
+            return { success: false, error: error.message}
         }
     }
 }
