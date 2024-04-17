@@ -16,7 +16,7 @@ spec:
       serviceAccountName: optikube-svc-account
       containers:
         - name: optikube5
-          image: gcr.io/utility-folder-419300/optikube5.0.2
+          image: gcr.io/utility-folder-419300/optikube5.0.3
           ports:
             - containerPort: 8080
           resources: 

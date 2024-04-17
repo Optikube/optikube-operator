@@ -13,7 +13,7 @@ RUN apk add --no-cache --virtual .gyp python3 make g++ && \
     apk del .gyp
 
 # Copy the server folder containing server.js into the container
-COPY back-end/server.js .
+COPY back-end .
 
 # Use a slimmer image for the final image
 FROM node:21-slim
