@@ -4,8 +4,8 @@ metadata:
   name: optikube-rolebinding
 subjects:
 - kind: ServiceAccount
-  name: optikube-service-account
-  namespace: optikube-namespace
+  name: optikube-svc-account
+  namespace: optikube
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
