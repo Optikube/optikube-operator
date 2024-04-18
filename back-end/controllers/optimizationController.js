@@ -6,7 +6,7 @@ const optimizationController = {};
 
 optimizationController.calculateWeightedOptimizationScore = async (req, res, next) => {
     const settingScores = {
-        'workload variability': { 'steady': 3, 'variable': 2, 'dynamic': 1 },
+        'workload variability': { 'dynamic': 1, 'variable': 2, 'steady': 3, },
         'application criticality': { 'critical': 1, 'moderately critical': 2, 'non-critical': 3 },
         'optimization priority': { 'performance': 1, 'balanced': 2, 'cost efficiency': 3 },
     }
@@ -25,7 +25,7 @@ optimizationController.calculateWeightedOptimizationScore = async (req, res, nex
     // }
 
     try {
-
+        // req.body
         const userInput = req.body.settings;
         const weightedScore = await optimizationService.calculateWeightedScore(userInput, categoryWeights, settingScores)
         req.weightedOptimizationScore = weightedScore;

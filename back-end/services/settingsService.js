@@ -33,9 +33,17 @@ class SettingsService {
     async getOptimizationSettings(namespace, deploymentName) {
         try {
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
+            const globalOptimizeSetKey = `global:optimization_deployments`;
+            const targetDeploymentName = `${namespace}:${deploymentName}`;
+
             const result = await redisClient.get(key);
+            const isInGlobalOptimizeSet = await redisClient.smIsMember(globalOptimizeSetKey, targetDeploymentName);
             // In redis if the get method yields no results it return nulls.
-            return result ? JSON.parse(result) : null;
+            const settings = result ? JSON.parse(result) : null;
+            return {
+                settings: settings,
+                isInGlobalOptimizeSet: isInGlobalOptimizeSet,
+            }
         } catch (error) {
             console.error(`Error fetching optimization settings for ${key}`, error)
             return { success: false, error: error.message }
@@ -77,6 +85,16 @@ class SettingsService {
         } catch (error) {
             console.error(`Error deleting optimization settings for ${key}`, error)
             return { success: false, error: error.message}
+        }
+    }
+    async flushRedisDb() {
+        try {
+            await redisClient.flushDb();
+            console.log('Current database cleared successfully.');
+            return { success: true, message: 'Current database cleared.' };
+        } catch (error) {
+            console.error('Error flushing current database', error);
+            return { success: false, error: error.message };
         }
     }
 }

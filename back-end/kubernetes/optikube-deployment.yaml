@@ -26,10 +26,10 @@ spec:
               value: "6379"
           resources: 
             requests:
-              cpu: "200m"
-              memory: "400Mi"
+              cpu: "150m"
+              memory: "200Mi"
             limits:
-              cpu: "500m"
-              memory: "600Mi"
+              cpu: "300m"
+              memory: "400Mi"
       imagePullSecrets:
         - name: gcr-json-key

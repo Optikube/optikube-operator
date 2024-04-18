@@ -42,8 +42,8 @@ settingsController.deleteOptimizationSettings = async (req, res, next) => {
 settingsController.getOptimizationSettings = async (req, res, next) => {
     try {
         // delete settings on user removing autoscaling
-        const namespace = req.body.namespace;
-        const deployment = req.body.deployment;
+        const namespace = req.query.namespace;
+        const deployment = req.query.deployment;
         const result = await settingsService.getOptimizationSettings(namespace, deployment)
         if (result === null) throw new Error('Settings not found')
         res.locals.result = result;
@@ -56,6 +56,21 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
         })
     }
 }
+
+settingsController.flushRedisDb = async (req,res, next) => {
+    try {
+        const result = await settingsService.flushRedisDb()
+        res.locals.result = result;
+        return next();
+    } catch {
+        return next({
+            log: "Error occurred in settingsController.flushRedisDb",
+            status: 500,
+            message: { err },
+        })
+    }
+}
+
 // class settingsController {
 //     async updateOptimizationSettings(req, res, next) {
 //         try {

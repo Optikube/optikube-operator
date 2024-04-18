@@ -31,5 +31,5 @@ spec:
         - containerPort: 6379
         resources:
           requests:
-            memory: "256Mi"
+            memory: "150Mi"
             cpu: "100m"

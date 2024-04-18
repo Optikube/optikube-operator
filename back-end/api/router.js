@@ -12,22 +12,41 @@ router.get('/deployments', appsController.viewAllDeployments, (req, res) => {
 
 // CRUD routes
 
-router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings,kedaController.updateScaledObject, (req, res) => {
+// router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings,kedaController.updateScaledObject, (req, res) => {
+//     return res.status(200).json({message: "Optimization settings updated successfully."})
+// })
+
+// router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
+//     return res.status(200).json({message: "Optimization settings created successfully and autoscaling started."})
+// })
+
+// router.delete('/settings/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, (req, res) => {
+//     return res.status(200).json({message: "Optimization settings removed successfully and autoscaling stopped."})
+// })
+
+// router.get('/settings/read', settingsController.getOptimizationSettings, kedaController.getOptimizationSettings, (req, res) => {
+//     return res.status(200).json({ settings: res.locals.result })
+// })
+
+
+router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, (req, res) => {
     return res.status(200).json({message: "Optimization settings updated successfully."})
 })
 
-router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
+router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, (req, res) => {
     return res.status(200).json({message: "Optimization settings created successfully and autoscaling started."})
 })
 
-router.delete('/settings/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, (req, res) => {
+router.delete('/settings/delete', settingsController.deleteOptimizationSettings, (req, res) => {
     return res.status(200).json({message: "Optimization settings removed successfully and autoscaling stopped."})
 })
 
-router.get('/settings/read', settingsController.getOptimizationSettings, kedaController.readScaledObject, (req, res) => {
-    return res.status(200).json({
-        // settings and or KEDA status info we need to send back to user
-    })
+router.get('/settings/read', settingsController.getOptimizationSettings, (req, res) => {
+    return res.status(200).json({ settings: res.locals.result })
+})
+
+router.delete('/settings/flush', settingsController.flushRedisDb, (req, res) => {
+    return res.status(200).json({ message: "Redis server flushed of all data.", result: res.locals.result, })
 })
 
 module.exports = router;
