@@ -92,3 +92,66 @@ async function evaluateCostAndUpdateHPA(cpuTarget) {
 
 // Export function
 module.exports = { evaluateCostAndUpdateHPA };
+
+
+
+//KEDA Operator Setup
+
+const k8sAPi = kc.makeApiClient(k8s.CustomObjectsApi)
+
+// Namespace for the KEDA scaled object - ideally will be dynamically input by user
+
+const userConfig = {
+    name: 'example-scaledobject',
+    targetName: 'target-deployment',
+    pollingInterval: '30',
+    cooldownPeriod: '300',
+    minReplicaCount: 1,
+    maxReplicaCount: 10,
+    triggerType: 'metrics-api',
+    triggerMetadata: {
+      url: 'kubecost API-address',
+    },
+  };
+
+// Define the ScaledObject file
+
+const createScaledObject = async (targetNamespace, userConfig) => {
+
+    const scaledObjectBody = {
+        apiVersion: 'keda.sh/v1alpha',
+        kind: 'ScaledObject',
+        metadata: {
+            name: userConfig.name,
+            namespace: targetNamespace,
+        },
+        spec: {
+            scaleTargetRef: {
+                name: userConfig.targetName
+            }
+        },
+        pollingInterval: userConfig.pollingInterval,
+        cooldownPeriod: userConfig.cooldownPeriod,
+        minReplicaCount: userConfig.minReplicaCount,
+        maxReplicaCount: userConfig.maxReplicaCount,
+        triggers: [
+            {
+                type: userConfig.triggerType,
+                metadata: userConfig.triggerMetaData,
+            },
+        ],
+    };
+
+    try {
+        const response = await k8sAPi.createNamespacedCustomObject(
+            'keda.sh',
+            'v1alpha1',
+            targetNamespace,
+            'scaledobjects',
+            scaledObjectBody,
+        );
+        console.log('ScaledObject created', response.body);
+    } catch (error) {
+        console.error('Error creating ScaledObject:', error);
+    }
+};
