@@ -20,4 +20,4 @@ class OptimizationScheduler {
     }
 }
 
-module.exports = new OptimizatonScheduler();
+module.exports = new OptimizationScheduler();

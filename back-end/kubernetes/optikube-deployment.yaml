@@ -16,9 +16,14 @@ spec:
       serviceAccountName: optikube-svc-account
       containers:
         - name: optikube5
-          image: gcr.io/utility-folder-419300/optikube5.0.4
+          image: gcr.io/utility-folder-419300/optikube5.0.17
           ports:
             - containerPort: 8080
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: "6379"
           resources: 
             requests:
               cpu: "200m"

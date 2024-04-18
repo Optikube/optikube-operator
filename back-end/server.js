@@ -1,10 +1,13 @@
 const express = require('express');
 const path = require('path');
-const { evaluateCostAndUpdateHPA } = require('./operators/operator');
+
 const optimizationScheduler = require('./services/optimizationScheduler');
 
 const app = express();
 const PORT = 8080;
+
+// Parse all responses in JSON
+app.use(express.json());
 
 // Imports for routers here
 const appsRouter = require('./api/router');
@@ -12,21 +15,14 @@ const appsRouter = require('./api/router');
 // Start the optimization scheduler wehn the application starts.
 optimizationScheduler.start()
 
-//Start server.
-app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}...`);
-});
-
-// Parse all responses in JSON
-app.use(express.json());
 
 // Route handlers
-app.use('/api/', appsRouter)
+app.use('/api', appsRouter)
 
 
 
 // Catch all route handler for any requests to unknown route.
-app.use((req, res) => {
+app.use('/', (req, res) => {
   res.sendStatus(404);
 })
 
@@ -40,6 +36,11 @@ app.use((err, req, res, next) => {
   const errorObj = Object.assign({}, defaultErr, err);
   console.log(errorObj.log);
   return res.status(errorObj.status).json(errorObj.message);
+});
+
+//Start server.
+app.listen(PORT, () => {
+  console.log(`Server listening on port: ${PORT}...`);
 });
 
 

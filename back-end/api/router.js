@@ -30,6 +30,4 @@ router.get('/settings/read', settingsController.getOptimizationSettings, kedaCon
     })
 })
 
-router.post('/settings/optimizeOn')
-
-router.post('/settings/optimizeOff')
+module.exports = router;
