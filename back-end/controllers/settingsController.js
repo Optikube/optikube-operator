@@ -26,14 +26,13 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
 settingsController.deleteOptimizationSettings = async (req, res, next) => {
     try {
         // delete settings on user removing autoscaling
-        const namespace = req.body.namespace;
-        const deployment = req.body.deployment;
+        const {namespace, deployment } = req.query.namespace;
         await settingsService.deleteOptimizationSettings(namespace, deployment)
         return next();
     } catch (err) {
         return next({
-            log: "Error occurred in settingsController.updateOptimizationSettings",
-            status: 400,
+            log: "Error occurred in settingsController.deleteOptimizationSettings",
+            status: 500,
             message: { err },
         })
     }
@@ -66,6 +65,20 @@ settingsController.flushRedisDb = async (req,res, next) => {
         return next({
             log: "Error occurred in settingsController.flushRedisDb",
             status: 500,
+            message: { err },
+        })
+    }
+}
+
+settingsController.getGlobalOptimizationSet = async (req,res, next) => {
+    try {
+        const result = await settingsService.checkOptimizationSet()
+        res.locals.result = result;
+        return next();
+    } catch {
+        return next({
+            log: "Error occurred in settingsController.getGlobalOptimizationSet",
+            status: 400,
             message: { err },
         })
     }

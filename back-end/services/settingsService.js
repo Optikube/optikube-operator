@@ -38,10 +38,14 @@ class SettingsService {
 
             const result = await redisClient.get(key);
             const isInGlobalOptimizeSet = await redisClient.smIsMember(globalOptimizeSetKey, targetDeploymentName);
+            console.log('globalOptimizeSetKey', globalOptimizeSetKey)
+            console.log('targetDeployment', targetDeploymentName)
+            console.log(isInGlobalOptimizeSet)
             // In redis if the get method yields no results it return nulls.
             const settings = result ? JSON.parse(result) : null;
             return {
-                settings: settings,
+                key,
+                settings,
                 isInGlobalOptimizeSet: isInGlobalOptimizeSet,
             }
         } catch (error) {
@@ -78,8 +82,10 @@ class SettingsService {
             const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
             // Delete deployment settings and record.
             const result = await redisClient.del(key);
+            console.log("result from deleting optimization setting", result);
             // Remove deployment from global optimization set.
-            await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
+            const setResult = await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
+            console.log('global set after deletion', setResult)
             // In redis if the del method works it returns the number of keys deleted, in this case 1.
             return { success: result === 1, log: 'Optimization settings successfully deleted.'  };
         } catch (error) {
@@ -94,6 +100,17 @@ class SettingsService {
             return { success: true, message: 'Current database cleared.' };
         } catch (error) {
             console.error('Error flushing current database', error);
+            return { success: false, error: error.message };
+        }
+    }
+    async checkOptimizationSet() {
+        const globalOptimizeSetKey = `global:optimization_deployments`;
+        try {
+            const allOptimizedDeployments = await redisClient.sMembers(globalOptimizeSetKey);
+            console.log('All deployments set for optimization:', allOptimizedDeployments);
+            return allOptimizedDeployments;
+        } catch (error) {
+            console.error('Error retrieving all optimized deployments', error);
             return { success: false, error: error.message };
         }
     }

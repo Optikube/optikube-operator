@@ -42,11 +42,15 @@ router.delete('/settings/delete', settingsController.deleteOptimizationSettings,
 })
 
 router.get('/settings/read', settingsController.getOptimizationSettings, (req, res) => {
-    return res.status(200).json({ settings: res.locals.result })
+    return res.status(200).json(res.locals.result)
 })
 
 router.delete('/settings/flush', settingsController.flushRedisDb, (req, res) => {
     return res.status(200).json({ message: "Redis server flushed of all data.", result: res.locals.result, })
+})
+
+router.get('/settings/read/global', settingsController.getGlobalOptimizationSet, (req, res) => {
+    return res.status(200).json(res.locals.result)
 })
 
 module.exports = router;

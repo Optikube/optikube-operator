@@ -23,6 +23,7 @@ class OptimizationService {
                 weightedScore = weightedScore / totalWeight;
             }
 
+            weightedScore = parseFloat(weightedScore.toFixed(1));
             return (weightedScore)
 
         } catch (error) {
