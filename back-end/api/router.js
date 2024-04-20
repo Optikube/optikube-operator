@@ -29,7 +29,7 @@ router.get('/deployments', appsController.viewAllDeployments, (req, res) => {
 // })
 
 
-router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, (req, res) => {
+router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings updated successfully."})
 })
 
@@ -37,7 +37,7 @@ router.post('/settings/create', optimizationController.calculateWeightedOptimiza
     return res.status(200).json({message: "Optimization settings created successfully and autoscaling started."})
 })
 
-router.delete('/settings/delete', settingsController.deleteOptimizationSettings, (req, res) => {
+router.delete('/settings/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings removed successfully and autoscaling stopped."})
 })
 

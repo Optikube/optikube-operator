@@ -9,8 +9,7 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
         const { namespace, deployment, settings } = req.body;
         const optimizationScore = req.weightedOptimizationScore;
-        console.log("req.body", req.body)
-
+    
         if(!namespace || !deployment || !settings || !optimizationScore) {
             return res.status(400).json({
                 error: `Mising required parameters in settingsController.updateOptimizationSettings.`
@@ -41,9 +40,9 @@ settingsController.deleteOptimizationSettings = async (req, res, next) => {
         await settingsService.deleteOptimizationSettings(namespace, deployment);
         return next();
     } catch (error) {
-        console.error(`Error occured in ${this.deleteOptimizationSettings}.`)
+        console.error(`Error occured in settingsController.deleteOptimizationSettings.`)
         return res.status(500).json({
-            log: `Error occured in ${this.deleteOptimizationSettings}.`,
+            log: `Error occured in settingsController.deleteOptimizationSettings.`,
             message: { error: error.message || "An error occured." },
         });
     }
@@ -56,7 +55,7 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
 
         if(!namespace || !deployment) {
             return res.status(400).json({
-                error: `Mising required parameters in ${this.getOptimizationSettings}.`
+                error: `Mising required parameters in settingsController.getOptimizationSettings.`
             });
         }
         const result = await settingsService.getOptimizationSettings(namespace, deployment);
@@ -66,9 +65,9 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
         res.locals.result = result;
         return next();
     } catch (error) {
-        console.error(`Error occured in ${this.getOptimizationSettings}.`)
+        console.error(`Error occured in settingsController.getOptimizationSettings.`)
         return res.status(500).json({
-            log: `Error occured in ${this.getOptimizationSettings}.`,
+            log: `Error occured in settingsController.getOptimizationSettings.`,
             message: { error: error.message || "An error occured." },
         });
     }
@@ -80,9 +79,9 @@ settingsController.flushRedisDb = async (req,res, next) => {
         res.locals.result = result;
         return next();
     } catch (error) {
-        console.error(`Error occured in ${this.flushRedisDb}.`)
+        console.error(`Error occured in settingsController.flsuhRedisDb.`)
         return res.status(500).json({
-            log: `Error occured in ${this.flushRedisDb}.`,
+            log: `Error occured in settingsController.flsuhRedisDb.`,
             message: { error: error.message || "An error occured." },
         });
     }
@@ -94,9 +93,9 @@ settingsController.getGlobalOptimizationSet = async (req,res, next) => {
         res.locals.result = result;
         return next();
     } catch (error) {
-        console.error(`Error occured in ${this.getGlobalOptimizationSet}.`)
+        console.error(`Error occured in settingsController.flushRedisDb.`)
         return res.status(500).json({
-            log: `Error occured in ${this.getGlobalOptimizationSet}.`,
+            log: `Error occured in settingsController.flushRedisDb.`,
             message: { error: error.message || "An error occured." },
         });
     }

@@ -7,16 +7,16 @@ class BalancedStrategy {
                     scaleDown: {
                         stabilizatonWindowSeconds: 90,
                         policies: [
-                            { type: 'Pods', value: '2', periodSeconds: 45 },
-                            { type: 'Percent', value: '15', periodSeconds: 45 },
+                            { type: 'Pods', value: 2, periodSeconds: 45 },
+                            { type: 'Percent', value: 15, periodSeconds: 45 },
                         ],
                         selectPolicy: 'Max',
                     },
                     scaleUp: {
                         stabilizationWindowSeconds: 40,
                         policies: [
-                            { type: 'Pods', value: '3', periodSeconds: 30 },
-                            { type: 'Percent', value: '50', periodSeconds: 30 }
+                            { type: 'Pods', value: 3, periodSeconds: 30 },
+                            { type: 'Percent', value: 50, periodSeconds: 30 }
                         ],
                         selectPolicy: 'Max',
                     }
