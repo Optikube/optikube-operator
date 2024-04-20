@@ -7,98 +7,99 @@ const settingsController = {};
 
 settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
-        const namespace = req.body.namespace;
-        const deployment = req.body.deployment;
-        const settings = req.body.settings;
-        const optimizationScore = req.weightedOptimizationScore
+        const { namespace, deployment, settings } = req.body;
+        const optimizationScore = req.weightedOptimizationScore;
+        console.log("req.body", req.body)
 
-        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true)
+        if(!namespace || !deployment || !settings || !optimizationScore) {
+            return res.status(400).json({
+                error: `Mising required parameters in settingsController.updateOptimizationSettings.`
+            });
+        }
+
+        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
         return next();
-    } catch (err) {
-        return next({
-            log: "Error occurred in settingsController.updateOptimizationSettings",
-            status: 400,
-            message: { err },
-        })
+    } catch (error) {
+        console.error(`Error occured in settingsController.updateOptimizationSettings.`)
+        return res.status(500).json({
+            log: `Error occured in settingsController.updateOptimizationSettings.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
-}
+};
 
 settingsController.deleteOptimizationSettings = async (req, res, next) => {
     try {
-        // delete settings on user removing autoscaling
-        const {namespace, deployment } = req.query.namespace;
-        await settingsService.deleteOptimizationSettings(namespace, deployment)
+        const {namespace, deployment } = req.query;
+
+        if(!namespace || !deployment) {
+            return res.status(400).json({
+                error: "Mising required parameters in settingsController.deleteOptimizationSettings."
+            });
+        }
+
+        await settingsService.deleteOptimizationSettings(namespace, deployment);
         return next();
-    } catch (err) {
-        return next({
-            log: "Error occurred in settingsController.deleteOptimizationSettings",
-            status: 500,
-            message: { err },
-        })
+    } catch (error) {
+        console.error(`Error occured in ${this.deleteOptimizationSettings}.`)
+        return res.status(500).json({
+            log: `Error occured in ${this.deleteOptimizationSettings}.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
-}
+};
 
 settingsController.getOptimizationSettings = async (req, res, next) => {
     try {
         // delete settings on user removing autoscaling
-        const namespace = req.query.namespace;
-        const deployment = req.query.deployment;
-        const result = await settingsService.getOptimizationSettings(namespace, deployment)
+        const {namespace, deployment } = req.query;
+
+        if(!namespace || !deployment) {
+            return res.status(400).json({
+                error: `Mising required parameters in ${this.getOptimizationSettings}.`
+            });
+        }
+        const result = await settingsService.getOptimizationSettings(namespace, deployment);
+
         if (result === null) throw new Error('Settings not found')
+
         res.locals.result = result;
         return next();
-    } catch (err) {
-        return next({
-            log: "Error occurred in settingsController.updateOptimizationSettings",
-            status: 400,
-            message: { err },
-        })
+    } catch (error) {
+        console.error(`Error occured in ${this.getOptimizationSettings}.`)
+        return res.status(500).json({
+            log: `Error occured in ${this.getOptimizationSettings}.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
-}
+};
 
 settingsController.flushRedisDb = async (req,res, next) => {
     try {
         const result = await settingsService.flushRedisDb()
         res.locals.result = result;
         return next();
-    } catch {
-        return next({
-            log: "Error occurred in settingsController.flushRedisDb",
-            status: 500,
-            message: { err },
-        })
+    } catch (error) {
+        console.error(`Error occured in ${this.flushRedisDb}.`)
+        return res.status(500).json({
+            log: `Error occured in ${this.flushRedisDb}.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
 
 settingsController.getGlobalOptimizationSet = async (req,res, next) => {
     try {
-        const result = await settingsService.checkOptimizationSet()
+        const result = await settingsService.getGlobalOptimizationSet()
         res.locals.result = result;
         return next();
-    } catch {
-        return next({
-            log: "Error occurred in settingsController.getGlobalOptimizationSet",
-            status: 400,
-            message: { err },
-        })
+    } catch (error) {
+        console.error(`Error occured in ${this.getGlobalOptimizationSet}.`)
+        return res.status(500).json({
+            log: `Error occured in ${this.getGlobalOptimizationSet}.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
-
-// class settingsController {
-//     async updateOptimizationSettings(req, res, next) {
-//         try {
-//             const namespace = req.params.namespace;
-//             const deployment = req.params.deployment;
-//             const settings = req.body;
-
-//             await settingsService.saveOptimizationSettings(namespace, deployment, settings, true)
-            
-//             res.status(200).json({message: "Optimization settings updated successfully."})
-//         } catch (error) {
-//             console.error(error);
-//             res.status(500).send("Error updating settings in settingsController.updateOptimizationSettings.", error)
-//         }
-//     };
-// };
 
 module.exports = settingsController;

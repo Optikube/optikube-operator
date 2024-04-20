@@ -33,7 +33,7 @@ router.patch('/settings/update', optimizationController.calculateWeightedOptimiz
     return res.status(200).json({message: "Optimization settings updated successfully."})
 })
 
-router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, (req, res) => {
+router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings created successfully and autoscaling started."})
 })
 

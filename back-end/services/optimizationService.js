@@ -23,16 +23,15 @@ class OptimizationService {
                 weightedScore = weightedScore / totalWeight;
             }
 
-            weightedScore = parseFloat(weightedScore.toFixed(1));
-            return (weightedScore)
+            const weightedScoreRounded = parseFloat(weightedScore.toFixed(1));
+            return (weightedScoreRounded)
 
         } catch (error) {
-            console.error('Error getting calculating weightedOptimzationScore.', error);
-            return {
-                success: false,
-                log: 'Error getting calculating weightedOptimzationScore.',
-                error: error.message 
-            }
+            console.error(`Error calculating weightedOptimizationScore in OptimizationService.calculateWeightedScore.`);
+            return res.status(500).json({
+                log: `Error calculating weightedOptimizationScore in OptimizationService.calculateWeightedScore.`,
+                message: { error: error.message || "An error occured." },
+            });
         }
     }
 
@@ -69,12 +68,11 @@ class OptimizationService {
             }
 
         } catch (error) {
-            console.error('Error getting executing optimizations in excuteHourlyOptimization.', error);
-            return {
-                success: false,
-                log: 'Error getting excecuting excuteHourlyOptimization.',
-                error: error.message 
-            }
+            console.error(`Error executing optimizations in OptimizationService.excuteHourlyOptimization.`);
+            return res.status(500).json({
+                log: `Error executing optimizations in OptimizationService.excuteHourlyOptimization.`,
+                message: { error: error.message || "An error occured." },
+            });
         }
 
     }

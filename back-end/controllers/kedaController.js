@@ -5,16 +5,16 @@ const kedaController = {};
 
 kedaController.createScaledObject = async (req, res, next) => {
     try {
-        const settings = req.body.settings;
-        const optimizationScore = req.body.optimizationScore
-        await kedaService.createScaledObject(settings, optimizationScore)
+        const { settings, kedaSpec } = req.body;
+        const optimizationScore = req.weightedOptimizationScore;
+        await kedaService.createScaledObject(settings, kedaSpec, optimizationScore)
         return next();
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.createScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`Error occured in kedaController.createScaledObject.`)
+        return res.status(500).json({
+            log: `Error occured in kedaController.createScaledObject.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
 
@@ -24,12 +24,12 @@ kedaController.readScaledObject = async (req, res, next) => {
         const scaledObject = await kedaService.readScaledObject(target);
         res.locals.keda = scaledObject.body;
         return next();
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.readScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`Error occured in kedaController.readScaledObject.`)
+        return res.status(500).json({
+            log: `Error occured in kedaController.readScaledObject.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
 
@@ -42,12 +42,12 @@ kedaController.updateScaledObject = async (req, res, next) => {
         const target = req.body.target;
         await kedaService.updateScaledObject(target, patchPayload);
         return next();
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.createScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`Error occured in kedaController.updateScaledObject.`)
+        return res.status(500).json({
+            log: `Error occured in kedaController.updateScaledObject.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
 
@@ -63,12 +63,12 @@ kedaController.deleteScaledObject = async (req, res, next) => {
             req.body.name,
             {}
         );
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.deleteScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`Error occured in kedaController.deleteScaledObject.`)
+        return res.status(500).json({
+            log: `Error occured in kedaController.deleteScaledObject.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
 

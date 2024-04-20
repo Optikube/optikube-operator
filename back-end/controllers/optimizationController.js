@@ -27,16 +27,21 @@ optimizationController.calculateWeightedOptimizationScore = async (req, res, nex
     try {
         // req.body
         const userInput = req.body.settings;
+        if(!userInput) {
+            return res.status(400).json({
+                error: `Mising required parameters in optimizationController.calculateWeightedOptimizationScore.`
+            });
+        }
         const weightedScore = await optimizationService.calculateWeightedScore(userInput, categoryWeights, settingScores)
         req.weightedOptimizationScore = weightedScore;
 
         return next();
-    } catch (err) {
-        return next({
-            log: "Error occurred in optimizationController.calculateOptimizationTarget",
-            status: 400,
-            message: { err },
-        })
+    } catch (error) {
+        console.error(`Error occured in optimizationController.calculateWeightedOptimizationScore.`)
+        return res.status(500).json({
+            log: `Error occured in optimizationController.calculateWeightedOptimizationScore.`,
+            message: { error: error.message || "An error occured." },
+        });
     }
 }
 
