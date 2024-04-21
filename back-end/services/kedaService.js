@@ -3,9 +3,10 @@ const balancedStrategy = require("../kedaStrats/balancedStrategy");
 const costEfficientStrategy = require('../kedaStrats/costEfficientStrategy');
 const performanceStrategy = require('../kedaStrats/performanceStrategy');
 
-
+// kedaService.js uses inputs from kedaController.js to perform scaled object operations.
 
 class KedaService {
+    // Determines scaling policies based on optimization score.
     async determineScalingPolicies(optimizationScore) {
         try {
             let scalingPolicies;
@@ -20,28 +21,30 @@ class KedaService {
             }
 
             if(scalingPolicies) {
+                console.log("Scaling policies determined for scaled object.")
                 return scalingPolicies;
             } else {
-                return res.status(400).json({
-                    error: "Scaling policies not determined in KedaService.determineScalingPolicies."
-                });
+                throw {
+                    origin: "KedaService.determineScalingPolicies",
+                    type: "Validation Error",
+                    status: 400,
+                    message: "Missing necessary output."
+                };
             }
         } catch (error) {
-            console.error(`Error determining scaling policies in KedaService.determineScalingPolicies.`)
-            return res.status(500).json({
-                log: `Error determining scaling policies in KedaService.determineScalingPolicies.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "KedaService.determineScalingPolicies",
+                type: "Scaling Policy Calculation Error",
+                error: error,
+                message: `Failed to determine scaling policies for scaled object: ${error.message}`
+            }
         }
     }
-
-
+    // Creates a scaled object for specified deployment.
     async createScaledObject(namespace, deployment, kedaSpec, optimizationScore) {
         try {
             const scaledObjectConfig = await this.determineScalingPolicies(optimizationScore);
-            
-            console.log("parameters:", namespace, deployment, kedaSpec, optimizationScore);
-      
+               
             const scaledObject = {
                 apiVersion: 'keda.sh/v1alpha1',
                 kind: 'ScaledObject',
@@ -75,20 +78,24 @@ class KedaService {
                     ],
                 },
             };
-            console.log('scaled object', scaledObject);
 
-            const response = await kedaOperator.createScaledObject(scaledObject);
-            return response;
-            // Should we be sending back a confirmation response??
+            await kedaOperator.createScaledObject(scaledObject);
+
+            console.log(`${scaledObject.metadata.name} successfully created for deployment:${deployment}`)
+            res.locals.response["Scaled Object"] = scaledObject.metadata.name;
+
+            return
+
         } catch (error) {
-            console.error(`Error creating scaled object in KedaService.createScaledObject.`)
-            return res.status(500).json({
-                log: `Error creating scaled object in KedaService.createScaledObject.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "KedaService.createScaledObject",
+                type: "Scaled Object Creation Error",
+                error: error,
+                message: `Failed to create scaled object for ${deployment}: ${error.message}`
+            }
         }
     };
-    
+    // Retrieves scaled object for specified deployment.
     async readScaledObject(target) {
         try {
            const targetScaledObject = {
@@ -101,15 +108,15 @@ class KedaService {
             const scaledObject = await kedaOperator.readScaledObject(targetScaledObject);
             return scaledObject;
         } catch (error) {
-            console.error(`Error reading scaled object in KedaService.readScaledObject.`)
-            return res.status(500).json({
-                log: `Error reading scaled object in KedaService.readScaledObject.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "KedaService.readScaledObject",
+                type: "Scaled Object Retrieval Error",
+                error: error,
+                message: `Failed to retrieve scaled object ${target.name}: ${error.message}`
+            }
         }
-
     }
-
+    // Updates a scaled object for specified deployment.
     async updateScaledObject(namespace, deployment, kedaSpec, optimizationScore) {
         try {
             const scaledObjectConfig = await this.determineScalingPolicies(optimizationScore);
@@ -147,31 +154,34 @@ class KedaService {
                 },
             };
             const response = await kedaOperator.updateScaledObject(namespace, deployment, body);
-            return response;
+            console.log(`${body.metadata.name} successfully updated.`)
+            return;
             // Should we be sending back a confirmation response??
         } catch (error) {
-            console.error(`Error updating scaled object in KedaService.updateScaledObject.`)
-            return res.status(500).json({
-                log: `Error updating scaled object in KedaService.updateScaledObject.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "KedaService.updateScaledObject",
+                type: "Scaled Object Update Error",
+                error: error,
+                message: `Failed to update scaled object for ${deployment}: ${error.message}`
+            }
         }
     }
-
+    // Deletes a scaled object for specified deployment.
     async deleteScaledObject(namespace, name) {
         try {
-            const response = await kedaOperator.deleteScaledObject(namespace, name);
+            await kedaOperator.deleteScaledObject(namespace, name);
             // Should we be sending back a confirmation response??
-            return response;
+            console.log(`${name} successfully deleted.`)
+            return;
         } catch (error) {
-            console.error(`Error deleting scaled object in KedaService.deleteScaledObject.`)
-            return res.status(500).json({
-                log: `Error updating scaled object in KedaService.deleteScaledObject.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "KedaService.deleteScaledObject",
+                type: "Scaled Object Deletion Error",
+                error: error,
+                message: `Failed to delete scaled object ${name}: ${error.message}`
+            }
         }
     }
-
 };
 
 module.exports = new KedaService();

@@ -30,22 +30,23 @@ app.use('/', (req, res) => {
 app.use((err, req, res, next) => {
 
   const defaultErr = {
-    log: "Express error handler caught unknown middleware error",
+    log: "Express error handler caught unknown middleware error.",
     status: 500,
-    message: { err: "An error occurred" },
-    origin: "Unknown"
+    message: { err: "An unexpected error occurred." },
+    origin: "Unknown",
+    type: "Unknown Error"
   };
   
-  const errorObj = Object.assign({}, defaultErr, err);
-
-  console.error(`${errorObj.origin}: ${errorObj.log}`) 
+  const errorObj = {...defaultErr, ...err};
+  console.error(`Error [${errorObj.type}] at ${errorObj.origin}: ${errorObj.message.err || err.message}`);
 
 
   return res.status(errorObj.status).json({
-    error: errorObj.message.err,
+    error: errorObj.message.err || "An error occured",
     location: errorObj.origin,
-    type: errorObj.type || "General Error"
+    type: errorObj.type
   });
+  
 });
 
 //Start server.

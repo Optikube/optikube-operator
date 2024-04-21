@@ -1,9 +1,9 @@
-// Performs functions like saving optimization settings for redis cache.
-
 const redisClient = require('../data/redisClient');
 
+// settingsService.js uses inputs from settingsController.js to perform settings operations in the Redis DB.
+
 class SettingsService {
-    // Method to save or update optimization settings
+    // Creates and updates optimization settings for the specified namespace and deployment.
     async updateOptimizationSettings(namespace, deploymentName, settings, optimizationScore, optimizeFlag) {
         try {
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
@@ -15,24 +15,35 @@ class SettingsService {
             const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
 
             if (optimizeFlag) {
-                await redisClient.sAdd(globalOptimizeSetKey, qualifiedDeploymentName)
+                await redisClient.sAdd(globalOptimizeSetKey, qualifiedDeploymentName);
+                console.log(`${qualifiedDeploymentName} successfully added to global optimization set.`)
             }
 
             if (!optimizeFlag) {
-                await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName)
+                await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
             }
 
-            // In redis if the set method is successful it returns  "OK".
-            return { success: result === 'OK', log: 'Optimization settings successfully updated.' };
+            // Succes log
+            if ( result === "OK") {
+                console.log(`Optimization settings successfully updated for ${deploymentName}`);
+                res.locals.response = {
+                    "Namespace": namespace,
+                    "Deployment": deploymentName,
+                    "Optimization Settings": settings,
+                    "Optimization Flag": optimizeFlag
+                }
+            }
+            return 
         } catch (error) {
-            console.error(`Error saving optimization settings for ${key} in ${this.updateOptimizationSettings}.`)
-            return res.status(500).json({
-                log: `Error saving optimization settings for ${key} in ${this.updateOptimizationSettings}.`,
-                message: { success: false, error: error.message || "An error occured."}
-            })
+            throw {
+                origin: "SettingsService.updateOptimizationSettings",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to update settings for ${deploymentName}: ${error.message}`
+            }
         }
     }
-    // Retrieves current optimization settings for specified deployment
+    // Retrieves updated optimization settings for the specified namespace and deployment.
     async getOptimizationSettings(namespace, deploymentName) {
         try {
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
@@ -41,22 +52,24 @@ class SettingsService {
 
             const result = await redisClient.get(key);
             const isInGlobalOptimizeSet = await redisClient.sIsMember(globalOptimizeSetKey, targetDeploymentName);
-            console.log('globalOptimizeSetKey', globalOptimizeSetKey)
-            console.log('targetDeployment', targetDeploymentName)
-            console.log('is Deployment in set', isInGlobalOptimizeSet)
+ 
             // In redis if the get method yields no results it return nulls.
             const settings = result ? JSON.parse(result) : null;
+            if (settings) {
+                console.log(`Optimization settings successfully retrieved for ${deploymentName}`)
+            }
             return {
                 key,
                 settings,
                 isInGlobalOptimizeSet,
             }
         } catch (error) {
-            console.error(`Error fetching optimization settings for ${key} in ${this.getOptimizationSettings}.`)
-            return res.status(500).json({
-                log: `Error fetching optimization settings for ${key} in ${this.getOptimizationSettings}.`,
-                message: { success: false, error: error.message || "An error occured."}
-            })
+            throw {
+                origin: "SettingsService.getOptimizationSettings",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to retrieve settings for ${deploymentName}: ${error.message}`
+            }
         }
     }
     // Retreieves all deployments tagged for hourly optimization.
@@ -71,46 +84,44 @@ class SettingsService {
                 const [namespace, deploymentName] = qualifiedDeployment.split(":");
                 const settings = await this.getOptimizationSettings(namespace, deploymentName);
                 if (settings && settings.optimize) {
-                    deployments.push({ namespace, deploymentName, settings })
+                    deployments.push({ namespace, deploymentName, settings });
                 }
             }
             return deployments;
         } catch (error) {
-            console.error(`Error listing deployments for optimization in ${this.getDeploymentsForOptimization}.`)
-            return res.status(500).json({
-                log: `Error listing deployments for optimization in ${this.getDeploymentsForOptimization}.`,
-                message: { success: false, error: error.message || "An error occured."}
-            })
+            throw {
+                origin: "SettingsService.getDeploymentsForOptimization",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to retrieve deployments and settings for optimization`
+            }
         }
     }
-    // Deletes existing optimization settings - will work in tandem with deleting KEDA Scaled Object. 
+    // Deletes exsting optimization settings for the specified namespace and deployment. 
     async deleteOptimizationSettings(namespace, deploymentName) {
         try {
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
             const globalOptimizeSetKey = `global:optimization_deployments`;
             const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
-            // Delete deployment settings and record.
-            console.log("Key for record to be deleted:", key);
-            const result = await redisClient.del(key);
-            console.log("Records deleted optimization setting:", result);
-            // Remove deployment from global optimization set.
-            console.log("Record to be deleted from global optimization set:", qualifiedDeploymentName);
-            const setResult = await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
-            console.log('Records deleted from global optimization set', setResult)
 
+            const result = await redisClient.del(key);
+            const setResult = await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
+            // This assumes all deployments to set to be optimized.
             const success = result > 0 && setResult > 0;
 
             if(!success) {
-                return { success: false, log: 'No settings found or already deleted.'}
+                console.log(`No optimization settings found for ${deploymentName} for deletion.`)
+            } else {
+                console.log(`Optimization settings for ${deploymentName} successfully deleted.`)
             }
-    
-            return { success: true, log: 'Optimization settings successfully deleted.'  };
+            return 
         } catch (error) {
-            console.error(`Error deleting optimization settings for ${key} in ${this.deleteOptimizationSettings}.`)
-            return res.status(500).json({
-                log: `Error deleting optimization settings for ${key} in ${this.deleteOptimizationSettings}.`,
-                message: { success: false, error: error.message || "An error occured."}
-            })
+            throw {
+                origin: "SettingsService.deleteOptimizationSettings",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to delete settings for ${deploymentName}: ${error.message}`
+            }
         }
     }
     // Used in testing to clear redis db.
@@ -118,13 +129,14 @@ class SettingsService {
         try {
             await redisClient.flushDb();
             console.log("Current database cleared successfully.");
-            return { success: true, message: "Current database cleared." };
+            return
         } catch (error) {
-            console.error("Error clearing current databse.")
-            return res.status(500).json({
-                log: "Error clearing current databse.",
-                message: { success: false, error: error.message || "An error occured."}
-            })
+            throw {
+                origin: "SettingsService.flushRedisDb",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to flush Redis DB`
+            }
         }
     }
     // Used in testing to see the global optimization set.
@@ -135,11 +147,12 @@ class SettingsService {
             console.log('All deployments set for optimization:', allOptimizedDeployments);
             return allOptimizedDeployments;
         } catch (error) {
-            console.error(`Error retrieving all optimized deployments in ${this.getGlobalOptimizationSet}.`);
-            return res.status(500).json({
-                log: `Error retrieving all optimized deployments in ${this.getGlobalOptimizationSet}.`,
-                message: { success: false, error: error.message || "An error occured."}
-            })
+            throw {
+                origin: "SettingsService.getGlobalOptimizationSet",
+                type: "Redis Error",
+                error: error,
+                message: `Failed retrieve global optimization set`
+            }
         }
     }
 }

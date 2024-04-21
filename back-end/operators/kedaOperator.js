@@ -9,31 +9,33 @@ class KedaOperator {
             const group = "keda.sh";
             const version = "v1alpha1";
             const namespace = scaledObject.metadata.namespace;
-            const plural = "scaledobjects"
+            const plural = "scaledobjects";
 
 
-            await k8sApi.createNamespacedCustomObject(group, version, namespace, plural, scaledObject)
+            await k8sApi.createNamespacedCustomObject(group, version, namespace, plural, scaledObject);
             // Should we be sending back a confirmation response??
-            return { success: true, message: "Scaled objected created successfully." }
+            console.log("Scaled object created by operator in Kubernetes cluster.");
+            return;
         } catch (error) {
-            console.error(`Error creating scaled object in createScaledObject within kedaOperator.`, error);
-            return res.status(500).json({
-                log: `Error occured in KedaOperator.createScaledObject.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "KedaOperator.createScaledObject",
+                type: "Operator Error",
+                error: error,
+                message: `Failed to create scaled object in Kubernetes cluster: ${error.message}`
+            }
         }
     }
 
     async readScaledObject(targetScaledObject) {
         try {
-            const scaledObject = await k8sApi.getNamespacedCustomObject(targetScaledObject)
+            const scaledObject = await k8sApi.getNamespacedCustomObject(targetScaledObject);
             return scaledObject;
         } catch (error) {
-            console.error(`Error creating scaled object in createScaledObject within kedaOperator.`, error);
-            return {
-                success: false,
-                log: `Error creating scaled object in createScaledObject within kedaOperator.`,
-                error: error.message 
+            throw {
+                origin: "KedaOperator.readScaledObject",
+                type: "Operator Error",
+                error: error,
+                message: `Failed to retrieve ${targetScaledObject} from Kubernetes cluster: ${error.message}`
             }
         }
     }
@@ -52,14 +54,14 @@ class KedaOperator {
                 undefined,
                 { headers: { 'Content-Type': 'application/merge-patch+json' } }
             );
-            return { success: true, message: "Scaled object updated successfully." }
-            // Should we be sending back a confirmation response??
+            console.log(`scaled-object-${deployment} successfully updated by operator in Kubernetes cluster.`);
+            return;
         } catch (error) {
-            console.error(`Error updating scaled object in updateScaledObject within kedaOperator.`, error);
-            return {
-                success: false,
-                log: `Error updating scaled object in updateScaledObject within kedaOperator.`,
-                error: error.message 
+            throw {
+                origin: "KedaOperator.updateScaledObject",
+                type: "Operator Error",
+                error: error,
+                message: `Failed to update scaled-object-${deployment} in Kubernetes cluster: ${error.message}`
             }
         }
     }
@@ -69,15 +71,17 @@ class KedaOperator {
             const group = "keda.sh";
             const version = "v1alpha1";
             const plural = "scaledobjects"
-            const response = await k8sApi.deleteNamespacedCustomObject(group, version, namespace, plural, name, {})
-            return { success: true, message: "Scaled object deleted successfully." }
-            // Should we be sending back a confirmation response??
+            
+            await k8sApi.deleteNamespacedCustomObject(group, version, namespace, plural, name, {});
+
+            console.log(`${name} successfully deleted by operator in Kubernetes cluster.`);
+            return;
         } catch (error) {
-            console.error(`Error deleting scaled object in deleteScaledObject within kedaOperator.`, error);
-            return {
-                success: false,
-                log: `Error deleting scaled object in deleteScaledObject within kedaOperator.`,
-                error: error.message 
+            throw {
+                origin: "KedaOperator.updateScaledObject",
+                type: "Operator Error",
+                error: error,
+                message: `Failed to delete ${name} in Kubernetes cluster: ${error.message}`
             }
         }
     }

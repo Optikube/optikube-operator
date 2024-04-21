@@ -1,62 +1,64 @@
-// Handles initiation of settings logic.
-// This is a bridge between the frontend and backend.
-
 const settingsService = require('../services/settingsService');
 
+// settingsController.js handles initiation of settings logic.
 const settingsController = {};
 
+// Updates optimization settings for specified namespace and deployment.
 settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
         const { namespace, deployment, settings } = req.body;
         const optimizationScore = req.weightedOptimizationScore;
     
-        if(!namespace || !deployment || !settings || !optimizationScore) {
-            return res.status(400).json({
-                error: `Mising required parameters in settingsController.updateOptimizationSettings.`
-            });
+        if (!namespace || !deployment || !settings || !optimizationScore) {
+            throw {
+                origin: "settingsController.updateOptimizationSettings",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
         }
 
         await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
         return next();
     } catch (error) {
-        console.error(`Error occured in settingsController.updateOptimizationSettings.`)
-        return res.status(500).json({
-            log: `Error occured in settingsController.updateOptimizationSettings.`,
-            message: { error: error.message || "An error occured." },
-        });
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 };
-
+// Deletes optimization settings for specified namespace and deployment.
 settingsController.deleteOptimizationSettings = async (req, res, next) => {
     try {
         const {namespace, deployment } = req.query;
 
-        if(!namespace || !deployment) {
-            return res.status(400).json({
-                error: "Mising required parameters in settingsController.deleteOptimizationSettings."
-            });
+        if (!namespace || !deployment) {
+            throw {
+                origin: "settingsController.deleteOptimizationSettings",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
         }
 
         await settingsService.deleteOptimizationSettings(namespace, deployment);
         return next();
     } catch (error) {
-        console.error(`Error occured in settingsController.deleteOptimizationSettings.`)
-        return res.status(500).json({
-            log: `Error occured in settingsController.deleteOptimizationSettings.`,
-            message: { error: error.message || "An error occured." },
-        });
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 };
-
+// Retrieves optimization settings for specified namespace and deployment.
 settingsController.getOptimizationSettings = async (req, res, next) => {
     try {
         // delete settings on user removing autoscaling
         const {namespace, deployment } = req.query;
 
-        if(!namespace || !deployment) {
-            return res.status(400).json({
-                error: `Mising required parameters in settingsController.getOptimizationSettings.`
-            });
+        if (!namespace || !deployment) {
+            throw {
+                origin: "settingsController.getOptimizationSettings",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
         }
         const result = await settingsService.getOptimizationSettings(namespace, deployment);
 
@@ -65,39 +67,29 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
         res.locals.result = result;
         return next();
     } catch (error) {
-        console.error(`Error occured in settingsController.getOptimizationSettings.`)
-        return res.status(500).json({
-            log: `Error occured in settingsController.getOptimizationSettings.`,
-            message: { error: error.message || "An error occured." },
-        });
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 };
-
+// Deletes all settings in Redis DB.
 settingsController.flushRedisDb = async (req,res, next) => {
     try {
-        const result = await settingsService.flushRedisDb()
-        res.locals.result = result;
+        await settingsService.flushRedisDb()
         return next();
     } catch (error) {
-        console.error(`Error occured in settingsController.flsuhRedisDb.`)
-        return res.status(500).json({
-            log: `Error occured in settingsController.flsuhRedisDb.`,
-            message: { error: error.message || "An error occured." },
-        });
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 }
-
+// Retrieves the global set that details deployments that are being optimized each hour.
 settingsController.getGlobalOptimizationSet = async (req,res, next) => {
     try {
         const result = await settingsService.getGlobalOptimizationSet()
         res.locals.result = result;
         return next();
     } catch (error) {
-        console.error(`Error occured in settingsController.flushRedisDb.`)
-        return res.status(500).json({
-            log: `Error occured in settingsController.flushRedisDb.`,
-            message: { error: error.message || "An error occured." },
-        });
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 }
 

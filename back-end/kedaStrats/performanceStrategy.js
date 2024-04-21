@@ -25,11 +25,12 @@ class PerformanceStrategy {
             }
             return scalingPolicies;
         } catch (error) {
-            console.error(`Error occured in PerformanceStrategy.calculateScalingPolicies.`)
-            return res.status(500).json({
-                log: `Error occured in PerformanceStrategy.calculateScalingPolicies.`,
-                message: { error: error.message || "An error occured." },
-            });
+            throw {
+                origin: "PerformanceStrategy.calculateScalingPolicies",
+                type: "Scaling Policy Calculation Error",
+                error: error,
+                message: `Failed to determine scaling policies for scaled object: ${error.message}`
+            }
         }
     }
 }

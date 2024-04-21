@@ -30,23 +30,23 @@ router.get('/deployments', appsController.viewAllDeployments, (req, res) => {
 
 
 router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, (req, res) => {
-    return res.status(200).json({message: "Optimization settings updated successfully."})
+    return res.status(200).json({message: "Optimization settings and scaled obeject updated successfully."})
 })
 
 router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
-    return res.status(200).json({message: "Optimization settings created successfully and autoscaling started."})
+    return res.status(200).json({message: "Optimization settings and scaled object created successfully.", response: res.locals.response})
 })
 
 router.delete('/settings/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, (req, res) => {
-    return res.status(200).json({message: "Optimization settings removed successfully and autoscaling stopped."})
+    return res.status(200).json({message: "Optimization settings and scaled object deleted successfully."})
 })
 
-router.get('/settings/read', settingsController.getOptimizationSettings, (req, res) => {
-    return res.status(200).json(res.locals.result)
+router.get('/settings/read', settingsController.getOptimizationSettings, kedaController.readScaledObject, (req, res) => {
+    return res.status(200).json({message: "Optimization settigngs and scaled object retrieved", payload: res.locals.result})
 })
 
 router.delete('/settings/flush', settingsController.flushRedisDb, (req, res) => {
-    return res.status(200).json({ message: "Redis server flushed of all data.", result: res.locals.result, })
+    return res.status(200).json({ message: "Redis database flushed of all data." })
 })
 
 router.get('/settings/read/global', settingsController.getGlobalOptimizationSet, (req, res) => {
