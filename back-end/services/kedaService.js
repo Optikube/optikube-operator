@@ -41,7 +41,7 @@ class KedaService {
         }
     }
     // Creates a scaled object for specified deployment.
-    async createScaledObject(namespace, deployment, kedaSpec, optimizationScore) {
+    async createScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore) {
         try {
             const scaledObjectConfig = await this.determineScalingPolicies(optimizationScore);
                
@@ -58,8 +58,8 @@ class KedaService {
                     },
                     pollingInterval: 30, // We might be able to caclulate all this similar to the target CPU utilization?
                     cooldownPeriod: scaledObjectConfig.cooldownPeriod,
-                    minReplicaCount: kedaSpec.minReplicaCount,
-                    maxReplicaCount: kedaSpec.maxReplicaCount,
+                    minReplicaCount: scaledObjectSpec.minReplicaCount,
+                    maxReplicaCount: scaledObjectSpec.maxReplicaCount,
                     advanced: {
                         restoreToOriginalReplicaCount: true,
                         horizontalPodAutoscalerConfig: { 
@@ -79,12 +79,20 @@ class KedaService {
                 },
             };
 
+            if (!namespace || !deployment || !scaledObject || !optimizationScore) {
+                throw {
+                    origin: "kedaService.createScaledObject",
+                    type: "Validation Error",
+                    status: 400,
+                    message: "Missing required parameters."
+                };
+            }
+
+            // console.log('Scaled Object', scaledObject);
             await kedaOperator.createScaledObject(scaledObject);
 
             console.log(`${scaledObject.metadata.name} successfully created for deployment:${deployment}`)
-            res.locals.response["Scaled Object"] = scaledObject.metadata.name;
-
-            return
+            return scaledObject.metadata.name;
 
         } catch (error) {
             throw {
@@ -96,31 +104,25 @@ class KedaService {
         }
     };
     // Retrieves scaled object for specified deployment.
-    async readScaledObject(target) {
+    async readScaledObject(namespace, scaledObjectName) {
         try {
-           const targetScaledObject = {
-                group: 'keda.sh',
-                version: 'v1alpha1',
-                namespace: target.namespace,
-                plural: 'scaledobjects',
-                name: target.name, // name of ScaledObject (we probably need to standardize naming)
-            }
-            const scaledObject = await kedaOperator.readScaledObject(targetScaledObject);
+            const scaledObject = await kedaOperator.readScaledObject(namespace, scaledObjectName);
             return scaledObject;
         } catch (error) {
             throw {
                 origin: "KedaService.readScaledObject",
                 type: "Scaled Object Retrieval Error",
                 error: error,
-                message: `Failed to retrieve scaled object ${target.name}: ${error.message}`
+                message: `Failed to retrieve scaled object ${scaledObjectName}: ${error.message}`
             }
         }
     }
     // Updates a scaled object for specified deployment.
-    async updateScaledObject(namespace, deployment, kedaSpec, optimizationScore) {
+    async updateScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore) {
         try {
             const scaledObjectConfig = await this.determineScalingPolicies(optimizationScore);
-            const body = {
+            //Body
+            const scaledObject = {
                 apiVersion: 'keda.sh/v1alpha1',
                 kind: 'ScaledObject',
                 metadata: {
@@ -133,8 +135,8 @@ class KedaService {
                     },
                     pollingInterval: 30, // We might be able to caclulate all this similar to the target CPU utilization?
                     cooldownPeriod: scaledObjectConfig.cooldownPeriod,
-                    minReplicaCount: kedaSpec.minReplicaCount,
-                    maxReplicaCount: kedaSpec.maxReplicaCount,
+                    minReplicaCount: scaledObjectSpec.minReplicaCount,
+                    maxReplicaCount: scaledObjectSpec.maxReplicaCount,
                     advanced: {
                         restoreToOriginalReplicaCount: true,
                         horizontalPodAutoscalerConfig: { 
@@ -153,8 +155,8 @@ class KedaService {
                     ],
                 },
             };
-            const response = await kedaOperator.updateScaledObject(namespace, deployment, body);
-            console.log(`${body.metadata.name} successfully updated.`)
+            const response = await kedaOperator.updateScaledObject(namespace, deployment, scaledObject);
+            console.log(`${scaledObject.metadata.name} successfully updated.`)
             return;
             // Should we be sending back a confirmation response??
         } catch (error) {
@@ -167,18 +169,18 @@ class KedaService {
         }
     }
     // Deletes a scaled object for specified deployment.
-    async deleteScaledObject(namespace, name) {
+    async deleteScaledObject(namespace, scaledObjectName) {
         try {
-            await kedaOperator.deleteScaledObject(namespace, name);
+            await kedaOperator.deleteScaledObject(namespace, scaledObjectName);
             // Should we be sending back a confirmation response??
-            console.log(`${name} successfully deleted.`)
+            console.log(`KedaService confirmation ${scaledObjectName} successfully deleted.`)
             return;
         } catch (error) {
             throw {
                 origin: "KedaService.deleteScaledObject",
-                type: "Scaled Object Deletion Error",
+                type: "Scaled Object Deletion",
                 error: error,
-                message: `Failed to delete scaled object ${name}: ${error.message}`
+                message: `Failed to delete scaled object ${scaledObjectName}: ${error.message}`
             }
         }
     }

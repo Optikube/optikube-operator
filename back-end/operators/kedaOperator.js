@@ -10,12 +10,13 @@ class KedaOperator {
             const version = "v1alpha1";
             const namespace = scaledObject.metadata.namespace;
             const plural = "scaledobjects";
+            const name = scaledObject.metadata.name;
 
-
-            await k8sApi.createNamespacedCustomObject(group, version, namespace, plural, scaledObject);
+            //Name not scaledObject
+            const response = await k8sApi.createNamespacedCustomObject(group, version, namespace, plural, scaledObject);
             // Should we be sending back a confirmation response??
-            console.log("Scaled object created by operator in Kubernetes cluster.");
-            return;
+            console.log(`Scaled object ${name} created by operator in Kubernetes cluster.`);
+            return response;
         } catch (error) {
             throw {
                 origin: "KedaOperator.createScaledObject",
@@ -26,9 +27,15 @@ class KedaOperator {
         }
     }
 
-    async readScaledObject(targetScaledObject) {
+    async readScaledObject(namespace, scaledObjectName) {
         try {
-            const scaledObject = await k8sApi.getNamespacedCustomObject(targetScaledObject);
+            const group = "keda.sh";
+            const version = "v1alpha1";
+
+            const plural = "scaledobjects";
+            const name = scaledObjectName;
+
+            const scaledObject = await k8sApi.getNamespacedCustomObject(group, version, namespace, plural, scaledObjectName);
             return scaledObject;
         } catch (error) {
             throw {
@@ -40,8 +47,9 @@ class KedaOperator {
         }
     }
 
-    async updateScaledObject(namespace, deployment, body) {
+    async updateScaledObject(namespace, deployment, scaledObject) {
         try {
+            const body = scaledObject;
              await k8sApi.patchNamespacedCustomObject(
                 'keda.sh',
                 'v1alpha1',
@@ -66,22 +74,22 @@ class KedaOperator {
         }
     }
 
-    async deleteScaledObject(namespace, name) {
+    async deleteScaledObject(namespace, scaledObjectName) {
         try {
             const group = "keda.sh";
             const version = "v1alpha1";
             const plural = "scaledobjects"
             
-            await k8sApi.deleteNamespacedCustomObject(group, version, namespace, plural, name, {});
+            await k8sApi.deleteNamespacedCustomObject(group, version, namespace, plural, scaledObjectName, {});
 
-            console.log(`${name} successfully deleted by operator in Kubernetes cluster.`);
+            console.log(`${scaledObjectName} successfully deleted by operator in Kubernetes cluster.`);
             return;
         } catch (error) {
             throw {
                 origin: "KedaOperator.updateScaledObject",
                 type: "Operator Error",
                 error: error,
-                message: `Failed to delete ${name} in Kubernetes cluster: ${error.message}`
+                message: `Failed to delete ${scaledObjectName} in Kubernetes cluster: ${error.message}`
             }
         }
     }

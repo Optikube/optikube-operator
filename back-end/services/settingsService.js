@@ -4,42 +4,42 @@ const redisClient = require('../data/redisClient');
 
 class SettingsService {
     // Creates and updates optimization settings for the specified namespace and deployment.
-    async updateOptimizationSettings(namespace, deploymentName, settings, optimizationScore, optimizeFlag) {
+    async updateOptimizationSettings(namespace, deployment, settings, optimizationScore, optimizeFlag) {
         try {
-            const key = `namespace:${namespace}:deployment:${deploymentName}`;
+            const key = `namespace:${namespace}:deployment:${deployment}`;
             const globalOptimizeSetKey = `global:optimization_deployments`
 
             const value = JSON.stringify({ settings, optimizationScore, optimize: optimizeFlag, });
             const result = await redisClient.set(key, value);
-
-            const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
+            console.log("namespace:", namespace, "deployment:", deployment);
+            const qualifiedDeployment = `${namespace}:${deployment}`;
+            console.log("qualifiedDeployment", qualifiedDeployment);
 
             if (optimizeFlag) {
-                await redisClient.sAdd(globalOptimizeSetKey, qualifiedDeploymentName);
-                console.log(`${qualifiedDeploymentName} successfully added to global optimization set.`)
+                await redisClient.sAdd(globalOptimizeSetKey, qualifiedDeployment);
+                console.log(`${qualifiedDeployment} successfully added to global optimization set.`)
             }
 
             if (!optimizeFlag) {
-                await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
+                await redisClient.sRem(globalOptimizeSetKey, qualifiedDeployment);
             }
 
             // Succes log
             if ( result === "OK") {
-                console.log(`Optimization settings successfully updated for ${deploymentName}`);
-                res.locals.response = {
+                console.log(`Optimization settings successfully updated for ${deployment}`);
+                return {
                     "Namespace": namespace,
-                    "Deployment": deploymentName,
+                    "Deployment": deployment,
                     "Optimization Settings": settings,
-                    "Optimization Flag": optimizeFlag
-                }
+                    "Optimization Actively Managed": optimizeFlag
+                };
             }
-            return 
         } catch (error) {
             throw {
                 origin: "SettingsService.updateOptimizationSettings",
                 type: "Redis Error",
                 error: error,
-                message: `Failed to update settings for ${deploymentName}: ${error.message}`
+                message: `Failed to update settings for ${deployment}: ${error.message}`
             }
         }
     }

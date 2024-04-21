@@ -29,20 +29,20 @@ router.get('/deployments', appsController.viewAllDeployments, (req, res) => {
 // })
 
 
-router.patch('/settings/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, (req, res) => {
+router.patch('/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings and scaled obeject updated successfully."})
 })
 
-router.post('/settings/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
+router.post('/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings and scaled object created successfully.", response: res.locals.response})
 })
 
-router.delete('/settings/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, (req, res) => {
+router.delete('/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, (req, res) => {
     return res.status(200).json({message: "Optimization settings and scaled object deleted successfully."})
 })
 
-router.get('/settings/read', settingsController.getOptimizationSettings, kedaController.readScaledObject, (req, res) => {
-    return res.status(200).json({message: "Optimization settigngs and scaled object retrieved", payload: res.locals.result})
+router.get('/read', settingsController.getOptimizationSettings, kedaController.readScaledObject, (req, res) => {
+    return res.status(200).json({message: "Optimization settigngs and scaled object retrieved", payload: res.locals.response})
 })
 
 router.delete('/settings/flush', settingsController.flushRedisDb, (req, res) => {

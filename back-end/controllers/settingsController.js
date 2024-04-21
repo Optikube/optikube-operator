@@ -8,7 +8,7 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
         const { namespace, deployment, settings } = req.body;
         const optimizationScore = req.weightedOptimizationScore;
-    
+        console.log("req.body", req.body);
         if (!namespace || !deployment || !settings || !optimizationScore) {
             throw {
                 origin: "settingsController.updateOptimizationSettings",
@@ -17,8 +17,8 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
                 message: "Missing required parameters."
             };
         }
-
-        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
+        // Assigning response object to res.locals to create stadardized reponse of data.
+        res.locals.response = await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
         return next();
     } catch (error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
@@ -28,6 +28,7 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
 // Deletes optimization settings for specified namespace and deployment.
 settingsController.deleteOptimizationSettings = async (req, res, next) => {
     try {
+        // Assumes namespace and deployment are included in the req.params
         const {namespace, deployment } = req.query;
 
         if (!namespace || !deployment) {
@@ -60,11 +61,11 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
                 message: "Missing required parameters."
             };
         }
-        const result = await settingsService.getOptimizationSettings(namespace, deployment);
+        const response = await settingsService.getOptimizationSettings(namespace, deployment);
 
-        if (result === null) throw new Error('Settings not found')
+        if (response === null) throw new Error('Settings not found')
 
-        res.locals.result = result;
+        res.locals.response = response;
         return next();
     } catch (error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
