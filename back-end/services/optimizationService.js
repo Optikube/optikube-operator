@@ -75,7 +75,7 @@ class OptimizationService {
                     return `Error accessing deployment:${deployment} data in Kubecost metrics when performing hourly optimization`
                 }
             }
-
+            
         } catch (error) {
             throw {
                 origin: "OptimizationService.executeHourlyOptimization",

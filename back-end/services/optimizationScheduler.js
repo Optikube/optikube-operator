@@ -4,17 +4,30 @@ const optimizationService = require('./optimizationService')
 
 class OptimizationScheduler {
     start() {
-        cron.schedule('0 * * * *', async () => {
-            console.log('Running resource optimization every hour on the hour.')
+        // cron.schedule('0 * * * *', async () => {
+        //     console.log('Running resource optimization every hour on the hour.')
+        //     try {
+        //         await optimizationService.executeHourlyOptimization()
+        //     } catch (error) {
+        //         throw {
+        //             origin: "OptimizationScheduler - cron",
+        //             type: "Optimization scheduler cron error",
+        //             error: error,
+        //             message: `Failed to run cron job and execute hourly optimization`
+        //         }
+        //     }
+        // });
+        cron.schedule('*/10 * * * *', async () => {
+            console.log('Running resource optimization every 10 minutes.')
             try {
-                await optimizationService.executeHourlyOptimization()
+                await optimizationService.executeHourlyOptimization() // Consider renaming if not hourly
             } catch (error) {
-                throw {
+                console.error({
                     origin: "OptimizationScheduler - cron",
                     type: "Optimization scheduler cron error",
                     error: error,
-                    message: `Failed to run cron job and execute hourly optimization`
-                }
+                    message: `Failed to run cron job and execute optimization every 10 minutes`
+                });
             }
         });
     }

@@ -4,19 +4,21 @@
 
 const axios = require('axios');
 // This will need to be dynamically set.
-const kubecostAddress = process.env.KUBECOST_ADDRESS || 'http://kubecost-cost-analyzer.kubecost.svc.cluster.local:9090';
+const kubecostAddress = process.env.KUBECOST_ADDRESS || 'http://kubecost-cost-analyzer.kubecost.svc.cluster.local:9090/model/allocation';
 // This will be the standard endpoint for most of out 
 
-async function fetchKubecostMetrics1H () {
+async function fetchDeploymentKubecostMetrics (window) {
     try {
         const params = {
-            window: '1h',
+            window: window,
             aggregate: 'controllerKind,controller',
             accumulate: 'true',
             idle: 'true',
         };
 
-        const response = await axios.get(kubecostAddress, { params } )
+        const response = await axios.get(kubecostAddress, { 
+            params,
+         });
 
         // Log response data
         console.log("response.data", response.data);
@@ -24,12 +26,12 @@ async function fetchKubecostMetrics1H () {
         return response
     } catch (error) {
         throw {
-            origin: "kubecostAdapter.fetchKubecostMetrics1H",
+            origin: "kubecostAdapter.fetchKubecostMetrics",
             type: "Kubecost API Request Error",
             error: error,
-            message: `Failed to fetch kubecost data for the past hour from Kubecost API: ${error.message}`
+            message: `Failed to fetch kubecost data from Kubecost API: ${error.message}`
         }
     }
 }
 
-module.exports = fetchKubecostMetrics1H;
+module.exports = fetchDeploymentKubecostMetrics;
