@@ -9,11 +9,11 @@ class OptimizationScheduler {
             try {
                 await optimizationService.executeHourlyOptimization()
             } catch (error) {
-                console.error('Error running optimization task in optimizationScheduler.', error);
-                return {
-                    success: false,
-                    log: 'Error running optimization task in optimizationScheduler.',
-                    error: error.message
+                throw {
+                    origin: "OptimizationScheduler - cron",
+                    type: "Optimization scheduler cron error",
+                    error: error,
+                    message: `Failed to run cron job and execute hourly optimization`
                 }
             }
         });

@@ -79,7 +79,7 @@ class OptimizationService {
         } catch (error) {
             throw {
                 origin: "OptimizationService.executeHourlyOptimization",
-                type: "Optimization Error",
+                type: "Hourly Optimization Error",
                 error: error,
                 message: `Failed to execute hourly optimization: ${error.message}`
             }

@@ -12,7 +12,7 @@ class PerformanceStrategy extends OptimizationStrategyBase {
 
             // correct the utilization if out of bounds
             if (cpuUtilizationAverage < 0.4  || cpuUtilizationAverage > 0.6) {
-                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.5, minCpuRequest)
+                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.5, 50)
                 // Potentially need to update scaled object target utilizaton to 50% to be sure if no already set initially
                 const cpuNewLimit = await this.calculateNewLimit(cpuNewRequest, 2.5)
                 const updatedResources = {
@@ -22,12 +22,13 @@ class PerformanceStrategy extends OptimizationStrategyBase {
                 // Update kubernetes deployment
                 await deploymentOperator.updateDeploymentResources(namespace, deploymentName, updatedResources);
             }
+            return;
         } catch (error) {
-            console.error('Error getting executing performance optimization strategy in PerformanceStrategy.optimize.', error);
-            return {
-                success: false,
-                log: 'Error getting executing PerformanceStrategy.optimize.',
-                error: error.message 
+            throw {
+                origin: "PeformanceStrategy.optimize",
+                type: "Optimization Strategy Error",
+                error: error,
+                message: `Failed to execute optimization strategy: ${error.message}`
             }
         }
     }

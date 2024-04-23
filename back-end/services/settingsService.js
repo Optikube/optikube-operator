@@ -79,6 +79,7 @@ class SettingsService {
         try {
             const qualifiedDeploymentNames = await redisClient.sMembers(globalOptimizeSetKey);
             const deployments = [];
+            console.log("Deployments for optimization - names", qualifiedDeploymentNames);
 
             for(const qualifiedDeployment of qualifiedDeploymentNames) {
                 const [namespace, deploymentName] = qualifiedDeployment.split(":");
@@ -87,13 +88,14 @@ class SettingsService {
                     deployments.push({ namespace, deploymentName, settings });
                 }
             }
+            console.log("Deployments for optimization", deployments);
             return deployments;
         } catch (error) {
             throw {
                 origin: "SettingsService.getDeploymentsForOptimization",
                 type: "Redis Error",
                 error: error,
-                message: `Failed to retrieve deployments and settings for optimization`
+                message: `Failed to retrieve deployments and settings for hourly optimization`
             }
         }
     }

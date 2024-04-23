@@ -12,7 +12,7 @@ class BalancedStrategy extends OptimizationStrategyBase {
 
             // correct the utilization if out of bounds
             if (cpuUtilizationAverage < 0.5  || cpuUtilizationAverage > 0.7) {
-                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.6, minCpuRequest)
+                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.6, 50)
                 // Potentially need to update scaled object target utilizaton to 50% to be sure if no already set initially
                 const cpuNewLimit = await this.calculateNewLimit(cpuNewRequest, 2)
                 const updatedResources = {
@@ -22,12 +22,13 @@ class BalancedStrategy extends OptimizationStrategyBase {
                 // Update kubernetes deployment
                 await deploymentOperator.updateDeploymentResources(namespace, deploymentName, updatedResources);
             }
+            return;
         } catch (error) {
-            console.error('Error getting executing balanced optimization strategy in BalancedStrategy.optimize.', error);
-            return {
-                success: false,
-                log: 'Error getting executing BalancedStrategy.optimize.',
-                error: error.message 
+            throw {
+                origin: "BalancedStrategy.optimize",
+                type: "Optimization Strategy Error",
+                error: error,
+                message: `Failed to execute optimization strategy: ${error.message}`
             }
         }
     }

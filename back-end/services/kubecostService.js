@@ -9,11 +9,11 @@ class KubecostService {
             // It's formatted as an array of objects but only has one object with all deployments by namespace?
             return response.data[0];
         } catch (error) {
-            console.error('Error getting Kubecost metrics in getKubecostMetricsForOptimization.', error);
-            return {
-                success: false,
-                log: 'Error getting Kubecost metrics in getKubecostMetricsForOptimization.',
-                error: error.message 
+            throw {
+                origin: "KubecostService.getKubecostMetricsForOptimization",
+                type: "KubecostService Error",
+                error: error,
+                message: `Failed to fetch kubecost data for optimization: ${error.message}`
             }
         }
 

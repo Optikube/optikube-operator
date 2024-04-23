@@ -5,15 +5,34 @@ class OptimizationStrategyBase {
         throw new Error('Optimize method must be implemented by subclass')
     }
     async calculateNewRequest (cpuCoreUsageAverage, cpuNewTargetUtilization, minCpuRequest) {
-        // Backs into new request number based off setting target CPU utilization
-        // This needs to align with the target CPU utilizataion in the scald object
-        let cpuNewRequest = Math.round(cpuCoreUsageAverage / cpuNewTargetUtilization);
+        try {
+            // Backs into new request number based off setting target CPU utilization
+            // This needs to align with the target CPU utilizataion in the scald object
+            let cpuNewRequest = Math.round(cpuCoreUsageAverage / cpuNewTargetUtilization);
 
-        return cpuNewRequest < minCPURequest ? minCpuRequest : cpuNewRequest;
+            return cpuNewRequest < minCpuRequest ? minCpuRequest : cpuNewRequest;
+        } catch (error) {
+            throw {
+                origin: "OptimizationStrategyBase.calculateNewRequest",
+                type: "Optimization Strategy Error",
+                error: error,
+                message: `Failed to calculate new value in optimization strategy: ${error.message}`
+            }
+        }
     }
     async calculateNewLimit (cpuNewRequest, cpuLimitBuffer) {
-        let cpuNewLimit = Math.round(cpuNewRequest * cpuLimitBuffer);
-        return cpuNewLimit;
+        try {
+            let cpuNewLimit = Math.round(cpuNewRequest * cpuLimitBuffer);
+            return cpuNewLimit;
+        } catch (error) {
+            throw {
+                origin: "OptimizationStrategyBase.calculateNewLimit",
+                type: "Optimization Strategy Error",
+                error: error,
+                message: `Failed to calculate new limit in optimization strategy: ${error.message}`
+            }
+
+        }
     }
 }
 
