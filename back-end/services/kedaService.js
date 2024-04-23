@@ -104,9 +104,10 @@ class KedaService {
         }
     };
     // Retrieves scaled object for specified deployment.
-    async readScaledObject(namespace, scaledObjectName) {
+    async readScaledObject(namespace, deployment) {
         try {
-            const scaledObject = await kedaOperator.readScaledObject(namespace, scaledObjectName);
+            const scaledObject = await kedaOperator.readScaledObject(namespace, deployment);
+            console.log(`Retrieved scaled object ${scaledObject.metadata.name}`)
             return scaledObject;
         } catch (error) {
             throw {

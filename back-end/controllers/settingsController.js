@@ -65,7 +65,7 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
 
         if (response === null) throw new Error('Settings not found')
 
-        res.locals.response = response;
+        res.locals.settings = response;
         return next();
     } catch (error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);

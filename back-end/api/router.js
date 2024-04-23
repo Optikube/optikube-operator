@@ -42,7 +42,7 @@ router.delete('/delete', settingsController.deleteOptimizationSettings, kedaCont
 })
 
 router.get('/read', settingsController.getOptimizationSettings, kedaController.readScaledObject, (req, res) => {
-    return res.status(200).json({message: "Optimization settigngs and scaled object retrieved", payload: res.locals.response})
+    return res.status(200).json({message: "Optimization settings and scaled object retrieved", settings: res.locals.settings, scaledObject: res.locals.scaledObject})
 })
 
 router.delete('/settings/flush', settingsController.flushRedisDb, (req, res) => {
