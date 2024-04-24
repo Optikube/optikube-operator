@@ -31,6 +31,19 @@ async function fetchDeploymentKubecostMetrics (window) {
     }
 }
 
+async function fetchChartKubecostMetrics (params) {
+    try {
+        const response = await axios.get(kubecostAddress, { params,});
+        return response.data;
+    } catch (error) {
+        throw {
+            origin: "kubecostAdapter.fetchChartKubecostMetrics",
+            type: "Kubecost API Request Error",
+            error: error,
+            message: `Failed to fetch kubecost data from Kubecost API: ${error.message}`
+        }
+    }
+}
 
-
+module.exports = fetchChartKubecostMetrics;
 module.exports = fetchDeploymentKubecostMetrics;

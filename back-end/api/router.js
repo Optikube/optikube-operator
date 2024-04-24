@@ -13,7 +13,7 @@ router.get('/deployments', deploymentController.getAllDeployments, (req, res) =>
 })
 
 // Kubecost Data Routes
-router.get('/fetchKubecost',  (req, res) => {
+router.get('fetch/kubecost/charts',  (req, res) => {
     return res.status(200).json({message: "Optimization settings and scaled object retrieved", settings: res.locals.settings, scaledObject: res.locals.scaledObject})
 })
 
