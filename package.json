@@ -53,6 +53,7 @@
     "@radix-ui/react-navigation-menu": "^1.1.4",
     "autoprefixer": "^10.4.19",
     "axios": "^1.6.8",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cookie-parser": "^1.4.6",
     "css": "^3.0.0",
@@ -67,7 +68,9 @@
     "recharts": "^2.12.4",
     "sass": "^1.74.1",
     "tailwind-merge": "^2.2.2",
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.3",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.0",
