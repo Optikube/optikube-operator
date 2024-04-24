@@ -79,15 +79,16 @@ class SettingsService {
         try {
             const qualifiedDeploymentNames = await redisClient.sMembers(globalOptimizeSetKey);
             const deployments = [];
-            console.log("Deployments for optimization - names", qualifiedDeploymentNames);
+            // console.log("Deployments for optimization - names", qualifiedDeploymentNames);
 
             for(const qualifiedDeployment of qualifiedDeploymentNames) {
                 const [namespace, deploymentName] = qualifiedDeployment.split(":");
                 const response = await this.getOptimizationSettings(namespace, deploymentName);
-                const { settings, optimizationScore } = response;
-                console.log("qualifiedDeployment settings", settings)
-                if (settings && response.optimize) {
-                    deployments.push({ namespace, deploymentName, settings, optimizationScore  });
+                console.log("response", response);
+                const { settings } = response;
+          
+                if (settings && settings.optimize) {
+                    deployments.push({ namespace, deploymentName, ...settings, });
                 }
             }
             console.log("Deployments for optimization", deployments);

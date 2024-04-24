@@ -19,11 +19,8 @@ async function fetchDeploymentKubecostMetrics (window) {
         const response = await axios.get(kubecostAddress, { 
             params,
          });
-
-        // Log response data
-        console.log("response.data", response.data);
         // It's formatted as an array of objects but only has one object with all deployments by namespace?
-        return response
+        return response.data
     } catch (error) {
         throw {
             origin: "kubecostAdapter.fetchKubecostMetrics",

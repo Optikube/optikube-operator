@@ -51,19 +51,23 @@ class OptimizationService {
             // Get all deployments tagged to be optimized
             const targetDeployments = await settingsService.getDeploymentsForOptimization()
             //Go through and optimize 
-            for (deployment of targetDeployments) {
+            for (const deployment of targetDeployments) {
+                console.log("deployment", deployment);
                 const optimizationScore = deployment.settings.optimizationScore;
                 // Accessing just the namespace and deployment data
-                const deploymentKubecostData = kubeCostMetrics[deployment.namespace]
+                const deploymentKubecostData = kubeCostMetrics[`deployment/${deployment.deploymentName}`]
+                console.log("deploymentKubecostData", deploymentKubecostData);
+                console.log("optimizationScore", optimizationScore);
+                console.log("deploymentKubecostData.properties.controller", deploymentKubecostData.properties.controller);
                 // Checks the the data we're looking at is the 
-                if (optimizationScore && deploymentKubecostData.name === deployment) {
+                if (optimizationScore && deploymentKubecostData.properties.controller === deployment.deploymentName) {
                     if (optimizationScore >= 1.0 && optimizationScore <= 1.6) {
                         // Invoke performance strategy
                         // Should pass in just the deployments namespace, name, metrics from kubeCost to the strategy
                         performanceStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData);
                     }
                     if (optimizationScore >= 1.7 && optimizationScore <= 2.3) {
-                        // Invboke mixed strategy
+                        // Invoke mixed strategy
                         balancedStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData)
 
                     }

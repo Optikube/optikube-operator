@@ -16,7 +16,6 @@ class KubecostService {
                 message: `Failed to fetch kubecost data for optimization: ${error.message}`
             }
         }
-
     }
 }
 
