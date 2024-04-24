@@ -10,7 +10,13 @@ appsController.viewAllDeployments = async (req, res, next) => {
     try {
         const { body } = await k8sApi.listDeploymentForAllNamespaces();
         console.log('k8sApi.listDeploymentForAllNamespaces:', body.items);
-        res.locals.deployments = body.items;
+        const deployments = body.items.map(item => {
+            return {
+                name: item.metadata.name,
+                namespace: item.metadata.namespace
+            };
+        });
+        res.locals.deployments = deployments
         return next();
     } catch(err) {
         return next({
