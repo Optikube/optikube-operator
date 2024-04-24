@@ -32,8 +32,8 @@ class OptimizationService {
             if (weightedScoreRounded) {
                 console.log("Optimization score successfully calculated.")
             }
-            return (weightedScoreRounded)
 
+            return (weightedScoreRounded)
         } catch (error) {
             throw {
                 origin: "OptimizationService.calculateWeightedScore",

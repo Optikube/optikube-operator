@@ -8,8 +8,9 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
         const { namespace, deployment, settings } = req.body;
         const optimizationScore = req.weightedOptimizationScore;
+        const optimizationStrategy = req.optimizationStrategy;
         console.log("req.body", req.body);
-        if (!namespace || !deployment || !settings || !optimizationScore) {
+        if (!namespace || !deployment || !settings || !optimizationScore || !optimizationStrategy) {
             throw {
                 origin: "settingsController.updateOptimizationSettings",
                 type: "Validation Error",
@@ -93,5 +94,6 @@ settingsController.getGlobalOptimizationSet = async (req,res, next) => {
         next(error);
     }
 }
+
 
 module.exports = settingsController;

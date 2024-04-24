@@ -38,6 +38,21 @@ optimizationController.calculateWeightedOptimizationScore = async (req, res, nex
         const weightedScore = await optimizationService.calculateWeightedScore(userInput, categoryWeights, settingScores);
         req.weightedOptimizationScore = weightedScore;
 
+
+        if (weightedScore >= 1.0 && weightedScore <= 1.6) {
+            // Invoke performance strategy\
+            req.optimizationStrategy = "Performance";
+        }
+        if (weightedScore >= 1.7 && weightedScore <= 2.3) {
+            // Invoke mixed strategy
+            req.optimizationStrategy = "Balanced";
+
+        }
+        if (weightedScore >= 2.4 && weightedScore <= 3.0) {
+            // Invoke cost efficient strategy
+            req.optimizationStrategy = "Cost Efficient";
+        }
+
         return next();
     } catch (error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);

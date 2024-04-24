@@ -17,6 +17,20 @@ class KubecostService {
             }
         }
     }
+    async getKubecostMetricsForCharts() {
+        try {
+            let response;
+            // It's formatted as an array of objects but only has one object with all deployments by namespace?
+            return response.data[0];
+        } catch (error) {
+            throw {
+                origin: "KubecostService.getKubecostMetricsForOptimization",
+                type: "KubecostService Error",
+                error: error,
+                message: `Failed to fetch kubecost data for optimization: ${error.message}`
+            }
+        }
+    }
 }
 
 module.exports = new KubecostService();

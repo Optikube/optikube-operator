@@ -47,6 +47,23 @@ class DeploymentOperator {
             }
         }
     }
+    async getAllDeployments () {
+        try {
+            const { body } = await k8sApi.listDeploymentForAllNamespaces();
+            // console.log("body", body);
+            return body.items;
+
+        } catch (error) {
+            throw {
+                origin: "DeploymentOperator.getAllDeployments",
+                type: "Deployment Operator Error",
+                error: error,
+                message: `Failed to fetch all deployment in Kubernetes cluster: ${error.message}`
+            }
+        }
+    }
+
+
 };
 
 module.exports = new DeploymentOperator();

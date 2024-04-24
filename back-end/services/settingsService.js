@@ -9,6 +9,8 @@ class SettingsService {
             const key = `namespace:${namespace}:deployment:${deployment}`;
             const globalOptimizeSetKey = `global:optimization_deployments`
 
+
+
             const value = JSON.stringify({ settings, optimizationScore, optimize: optimizeFlag, });
             const result = await redisClient.set(key, value);
             console.log("namespace:", namespace, "deployment:", deployment);
@@ -60,7 +62,7 @@ class SettingsService {
             }
             return {
                 key,
-                settings,
+                ...settings,
                 isInGlobalOptimizeSet,
             }
         } catch (error) {
@@ -98,7 +100,7 @@ class SettingsService {
                 origin: "SettingsService.getDeploymentsForOptimization",
                 type: "Redis Error",
                 error: error,
-                message: `Failed to retrieve deployments and settings for hourly optimization`
+                message: `Failed to retrieve deployments and settings for hourly optimization ${error.message}`
             }
         }
     }
@@ -156,7 +158,23 @@ class SettingsService {
                 origin: "SettingsService.getGlobalOptimizationSet",
                 type: "Redis Error",
                 error: error,
-                message: `Failed retrieve global optimization set`
+                message: `Failed retrieve global optimization set: ${error.message}`
+            }
+        }
+    }
+    async isInGlobalOptimizeSet(namespace, deploymentName) {
+        try {
+            const globalOptimizeSetKey = `global:optimization_deployments`;
+            const targetDeploymentName = `${namespace}:${deploymentName}`;
+
+            return await redisClient.sIsMember(globalOptimizeSetKey, targetDeploymentName);
+
+        } catch (error) {
+            throw {
+                origin: "SettingsService.isInGlobalOptimizeSet",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to confirm if deployment is in global optimization set: ${error.message}`
             }
         }
     }
