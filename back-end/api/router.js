@@ -3,6 +3,7 @@ const appsController = require('../controllers/appsController');
 const optimizationController = require('../controllers/optimizationController');
 const settingsController = require('../controllers/settingsController');
 const kedaController = require('../controllers/kedaController');
+const kubecostAdapter = require('../adapters/kubecostAdapter')
 
 const router = express.Router();
 
@@ -27,6 +28,9 @@ router.get('/deployments', appsController.viewAllDeployments, (req, res) => {
 // router.get('/settings/read', settingsController.getOptimizationSettings, kedaController.getOptimizationSettings, (req, res) => {
 //     return res.status(200).json({ settings: res.locals.result })
 // })
+router.get('/fetchKubecost',  (req, res) => {
+    return res.status(200).json({message: "Optimization settings and scaled object retrieved", settings: res.locals.settings, scaledObject: res.locals.scaledObject})
+})
 
 
 router.patch('/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, (req, res) => {

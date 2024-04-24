@@ -1,14 +1,15 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 const optimizationScheduler = require('./services/optimizationScheduler');
 
 const app = express();
 const PORT = 8080;
-
+// Enable CORS for all routes
+app.use(cors());
 // Parse all responses in JSON
 app.use(express.json());
-
 // Imports for routers here
 const appsRouter = require('./api/router');
 

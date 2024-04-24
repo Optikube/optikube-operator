@@ -52,26 +52,30 @@ class OptimizationService {
             const targetDeployments = await settingsService.getDeploymentsForOptimization()
             //Go through and optimize 
             for (const deployment of targetDeployments) {
-                console.log("deployment", deployment);
-                const optimizationScore = deployment.settings.optimizationScore;
+                console.log("taregetDeployment", targetDeployments);
+                console.log("deployment", targetDeployments[0]);
+                const { deploymentName, optimizationScore } = deployment;
                 // Accessing just the namespace and deployment data
                 const deploymentKubecostData = kubeCostMetrics[`deployment/${deployment.deploymentName}`]
                 console.log("deploymentKubecostData", deploymentKubecostData);
                 console.log("optimizationScore", optimizationScore);
                 console.log("deploymentKubecostData.properties.controller", deploymentKubecostData.properties.controller);
                 // Checks the the data we're looking at is the 
-                if (optimizationScore && deploymentKubecostData.properties.controller === deployment.deploymentName) {
+                if (optimizationScore && deploymentKubecostData.properties.controller === deploymentName) {
                     if (optimizationScore >= 1.0 && optimizationScore <= 1.6) {
+                        console.log("inside optimization for strat")
                         // Invoke performance strategy
                         // Should pass in just the deployments namespace, name, metrics from kubeCost to the strategy
                         performanceStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData);
                     }
                     if (optimizationScore >= 1.7 && optimizationScore <= 2.3) {
+                        console.log("inside optimization for strat")
                         // Invoke mixed strategy
                         balancedStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData)
 
                     }
                     if (optimizationScore >= 2.4 && optimizationScore <= 3.0) {
+                        console.log("inside optimization for strat")
                         // Invoke cost efficient strategy
                         costEfficientStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData)
                     }
