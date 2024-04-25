@@ -1,22 +1,35 @@
 // Applies business logic to the data retrieved with kubecostAdapter.
 // Utilizing the data fetched by the adapter in ways that fulfill the application's specific purposes and goals.
-const fetchKubecostMetrics1H = require('../adapters/kubecostAdapter')
+const fetchKubecostMetrics = require('../adapters/kubecostAdapter')
 
 class KubecostService {
     async getKubecostMetricsForOptimization() {
         try {
-            const response = await fetchKubecostMetrics1H();
+            const response = await fetchKubecostMetrics('6h');
             // It's formatted as an array of objects but only has one object with all deployments by namespace?
             return response.data[0];
         } catch (error) {
-            console.error('Error getting Kubecost metrics in getKubecostMetricsForOptimization.', error);
-            return {
-                success: false,
-                log: 'Error getting Kubecost metrics in getKubecostMetricsForOptimization.',
-                error: error.message 
+            throw {
+                origin: "KubecostService.getKubecostMetricsForOptimization",
+                type: "KubecostService Error",
+                error: error,
+                message: `Failed to fetch kubecost data for optimization: ${error.message}`
             }
         }
-
+    }
+    async getKubecostMetricsForCharts() {
+        try {
+            let response;
+            // It's formatted as an array of objects but only has one object with all deployments by namespace?
+            return response.data[0];
+        } catch (error) {
+            throw {
+                origin: "KubecostService.getKubecostMetricsForOptimization",
+                type: "KubecostService Error",
+                error: error,
+                message: `Failed to fetch kubecost data for optimization: ${error.message}`
+            }
+        }
     }
 }
 

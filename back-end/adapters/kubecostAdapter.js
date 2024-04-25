@@ -4,33 +4,33 @@
 
 const axios = require('axios');
 // This will need to be dynamically set.
-const kubecostAddress = ''
+const kubecostAddress = process.env.KUBECOST_ADDRESS || 'http://kubecost-cost-analyzer.kubecost.svc.cluster.local:9090/model/allocation';
 // This will be the standard endpoint for most of out 
-const endpoint = '/model/allocation'
 
-async function fetchKubecostMetrics1H () {
+async function fetchDeploymentKubecostMetrics (window) {
     try {
         const params = {
-            window: '1h',
-            aggregate: 'deployment',
+            window: window,
+            aggregate: 'controllerKind,controller',
             accumulate: 'true',
             idle: 'true',
         };
 
-        const response = await axios.get(kubecostAddress + endpoint, { params } )
-
-        // Log response data
-        console.log(response.data);
+        const response = await axios.get(kubecostAddress, { 
+            params,
+         });
         // It's formatted as an array of objects but only has one object with all deployments by namespace?
-        return response
+        return response.data
     } catch (error) {
-        console.error('Error fetching Kubecost metrics in fetchKubecostMetrics1H function.', error)
-        return { 
-            succes: false,
-            log: 'Error fetching Kubecost metrics in fetchKubecostMetrics1H function.',
-            error: error.message
+        throw {
+            origin: "kubecostAdapter.fetchKubecostMetrics",
+            type: "Kubecost API Request Error",
+            error: error,
+            message: `Failed to fetch kubecost data from Kubecost API: ${error.message}`
         }
     }
 }
 
-module.exports = fetchKubecostMetrics1H;
+
+
+module.exports = fetchDeploymentKubecostMetrics;

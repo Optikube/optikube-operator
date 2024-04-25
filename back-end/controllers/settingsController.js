@@ -8,8 +8,9 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
         const { namespace, deployment, settings } = req.body;
         const optimizationScore = req.weightedOptimizationScore;
+        const optimizationStrategy = req.optimizationStrategy;
         console.log("req.body", req.body);
-        if (!namespace || !deployment || !settings || !optimizationScore) {
+        if (!namespace || !deployment || !settings || !optimizationScore || !optimizationStrategy) {
             throw {
                 origin: "settingsController.updateOptimizationSettings",
                 type: "Validation Error",
@@ -65,7 +66,7 @@ settingsController.getOptimizationSettings = async (req, res, next) => {
 
         if (response === null) throw new Error('Settings not found')
 
-        res.locals.response = response;
+        res.locals.settings = response;
         return next();
     } catch (error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
@@ -93,5 +94,6 @@ settingsController.getGlobalOptimizationSet = async (req,res, next) => {
         next(error);
     }
 }
+
 
 module.exports = settingsController;

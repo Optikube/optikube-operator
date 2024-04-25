@@ -9,6 +9,8 @@ class SettingsService {
             const key = `namespace:${namespace}:deployment:${deployment}`;
             const globalOptimizeSetKey = `global:optimization_deployments`
 
+
+
             const value = JSON.stringify({ settings, optimizationScore, optimize: optimizeFlag, });
             const result = await redisClient.set(key, value);
             console.log("namespace:", namespace, "deployment:", deployment);
@@ -60,7 +62,7 @@ class SettingsService {
             }
             return {
                 key,
-                settings,
+                ...settings,
                 isInGlobalOptimizeSet,
             }
         } catch (error) {
@@ -79,21 +81,26 @@ class SettingsService {
         try {
             const qualifiedDeploymentNames = await redisClient.sMembers(globalOptimizeSetKey);
             const deployments = [];
+            // console.log("Deployments for optimization - names", qualifiedDeploymentNames);
 
             for(const qualifiedDeployment of qualifiedDeploymentNames) {
                 const [namespace, deploymentName] = qualifiedDeployment.split(":");
-                const settings = await this.getOptimizationSettings(namespace, deploymentName);
+                const response = await this.getOptimizationSettings(namespace, deploymentName);
+                console.log("response", response);
+                const { settings } = response;
+          
                 if (settings && settings.optimize) {
-                    deployments.push({ namespace, deploymentName, settings });
+                    deployments.push({ namespace, deploymentName, ...settings, });
                 }
             }
+            console.log("Deployments for optimization", deployments);
             return deployments;
         } catch (error) {
             throw {
                 origin: "SettingsService.getDeploymentsForOptimization",
                 type: "Redis Error",
                 error: error,
-                message: `Failed to retrieve deployments and settings for optimization`
+                message: `Failed to retrieve deployments and settings for hourly optimization ${error.message}`
             }
         }
     }
@@ -151,7 +158,23 @@ class SettingsService {
                 origin: "SettingsService.getGlobalOptimizationSet",
                 type: "Redis Error",
                 error: error,
-                message: `Failed retrieve global optimization set`
+                message: `Failed retrieve global optimization set: ${error.message}`
+            }
+        }
+    }
+    async isInGlobalOptimizeSet(namespace, deploymentName) {
+        try {
+            const globalOptimizeSetKey = `global:optimization_deployments`;
+            const targetDeploymentName = `${namespace}:${deploymentName}`;
+
+            return await redisClient.sIsMember(globalOptimizeSetKey, targetDeploymentName);
+
+        } catch (error) {
+            throw {
+                origin: "SettingsService.isInGlobalOptimizeSet",
+                type: "Redis Error",
+                error: error,
+                message: `Failed to confirm if deployment is in global optimization set: ${error.message}`
             }
         }
     }

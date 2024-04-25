@@ -15,7 +15,7 @@ class DeploymentOperator {
             await k8sApi.patchNamespacedDeployment(
                 deployment,
                 namespace,
-                patch,
+                patchPayload,
                 undefined, // pretty
                 undefined, // dryRun
                 undefined, // fieldManager
@@ -24,11 +24,11 @@ class DeploymentOperator {
             );
 
         } catch (error) {
-            console.error(`Error getting updated deployment:${deployment} resources in updateDeploymentResources.`, error);
-            return {
-                success: false,
-                log: 'Error updating deployment resources.',
-                error: error.message 
+            throw {
+                origin: "DeploymentOperator.updateDeploymentResources",
+                type: "Deployment Operator Error",
+                error: error,
+                message: `Failed to update deployment resources in Kubernetes cluster: ${error.message}`
             }
         }
     }
@@ -39,14 +39,31 @@ class DeploymentOperator {
             const response = k8sApi.readNamespacedDeployment(deploymentName, namespace);
             return response.body.spec;
         } catch (error) {
-            console.error(`Error getting spec for deployment:${deployment} resources in updateDeploymentResources.`, error);
-            return {
-                success: false,
-                log: 'Error getting calculating weightedOptimzationScore.',
-                error: error.message 
+            throw {
+                origin: "DeploymentOperator.fetchDeployment",
+                type: "Deployment Operator Error",
+                error: error,
+                message: `Failed to fetch deployment in Kubernetes cluster: ${error.message}`
             }
         }
     }
+    async getAllDeployments () {
+        try {
+            const { body } = await k8sApi.listDeploymentForAllNamespaces();
+            // console.log("body", body);
+            return body.items;
+
+        } catch (error) {
+            throw {
+                origin: "DeploymentOperator.getAllDeployments",
+                type: "Deployment Operator Error",
+                error: error,
+                message: `Failed to fetch all deployment in Kubernetes cluster: ${error.message}`
+            }
+        }
+    }
+
+
 };
 
 module.exports = new DeploymentOperator();

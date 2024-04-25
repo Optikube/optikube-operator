@@ -10,18 +10,22 @@
     "type": "git",
     "url": "https://github.com/oslabs-beta/OptiKube"
   },
-  "keywords": ["optikube", "OptiKube"],
+  "keywords": [
+    "optikube",
+    "OptiKube"
+  ],
   "author": "OptiKube Team",
   "dependencies": {
     "@kubernetes/client-node": "^0.20.0",
     "axios": "^1.6.8",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "node": "^18.20.0",
     "node-cron": "^3.0.3",
-    "redis": "^4.6.13",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "redis": "^4.6.13"
   },
   "contributors": [
     {
@@ -48,4 +52,3 @@
   "license": "MIT",
   "private": true
 }
-

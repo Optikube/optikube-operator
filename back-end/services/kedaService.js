@@ -104,16 +104,18 @@ class KedaService {
         }
     };
     // Retrieves scaled object for specified deployment.
-    async readScaledObject(namespace, scaledObjectName) {
+    async readScaledObject(namespace, deployment) {
         try {
-            const scaledObject = await kedaOperator.readScaledObject(namespace, scaledObjectName);
+            const { body } = await kedaOperator.readScaledObject(namespace, deployment);
+            const scaledObject = body;
+            console.log(`Retrieved scaled object ${scaledObject.metadata.name}`)
             return scaledObject;
         } catch (error) {
             throw {
                 origin: "KedaService.readScaledObject",
                 type: "Scaled Object Retrieval Error",
                 error: error,
-                message: `Failed to retrieve scaled object ${scaledObjectName}: ${error.message}`
+                message: `Failed to retrieve scaled object ${deployment}: ${error.message}`
             }
         }
     }

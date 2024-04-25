@@ -27,15 +27,15 @@ class KedaOperator {
         }
     }
 
-    async readScaledObject(namespace, scaledObjectName) {
+    async readScaledObject(namespace, deployment) {
         try {
             const group = "keda.sh";
             const version = "v1alpha1";
 
             const plural = "scaledobjects";
-            const name = scaledObjectName;
+            const name = `scaled-object-${deployment}`;
 
-            const scaledObject = await k8sApi.getNamespacedCustomObject(group, version, namespace, plural, scaledObjectName);
+            const scaledObject = await k8sApi.getNamespacedCustomObject(group, version, namespace, plural, name);
             return scaledObject;
         } catch (error) {
             throw {

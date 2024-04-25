@@ -28,9 +28,9 @@ kedaController.createScaledObject = async (req, res, next) => {
 // Retrieves scaled object for specified deployment.
 kedaController.readScaledObject = async (req, res, next) => {
     try {
-        const {namespace, scaledObjectName } = req.query;
+        const {namespace, deployment } = req.query;
 
-        if (!namespace || !scaledObjectName) {
+        if (!namespace || !deployment) {
             throw {
                 origin: "kedaController.readScaledObject",
                 type: "Validation Error",
@@ -39,8 +39,8 @@ kedaController.readScaledObject = async (req, res, next) => {
             };
         }
 
-        const scaledObject = await kedaService.readScaledObject(namespace, scaledObjectName);
-        res.locals.response = scaledObject.body;
+        const scaledObject = await kedaService.readScaledObject(namespace, deployment);
+        res.locals.scaledObject = scaledObject;
         return next();
     } catch(error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
