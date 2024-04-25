@@ -30,7 +30,7 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
 settingsController.deleteOptimizationSettings = async (req, res, next) => {
     try {
         // Assumes namespace and deployment are included in the req.params
-        const {namespace, deployment } = req.query;
+        const {namespace, deployment } = req.body;
 
         if (!namespace || !deployment) {
             throw {

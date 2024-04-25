@@ -13,4 +13,18 @@ deploymentController.getAllDeployments = async (req, res, next) => {
     }
 }
 
+deploymentController.getDeployment = async (req ,res, next) => {
+    try {
+        const {namespace, deployment } = req.body;
+        console.log("namespace", namespace);
+        console.log("deployment", deployment);
+        res.locals.deployment = await deploymentService.getDeployment(deployment, namespace);
+
+        return next();
+    } catch(error) {
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
+    }
+}
+
 module.exports = deploymentController;

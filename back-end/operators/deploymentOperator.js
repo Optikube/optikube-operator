@@ -63,6 +63,21 @@ class DeploymentOperator {
         }
     }
 
+    async getDeployment (deploymentName, namespace) {
+        try {
+            const response = await k8sApi.readNamespacedDeployment(deploymentName, namespace);
+            console.log("Response.body", response.body);
+            return response.body;
+        } catch (error) {
+            throw {
+                origin: "DeploymentOperator.getDeployment",
+                type: "Deployment Operator Error",
+                error: error,
+                message: `Failed to fetch deployment in Kubernetes cluster: ${error.message}`
+            }
+        }
+    }
+
 
 };
 

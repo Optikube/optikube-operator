@@ -50,7 +50,7 @@ kedaController.readScaledObject = async (req, res, next) => {
 // Updates scaled object for specified deployment.
 kedaController.updateScaledObject = async (req, res, next) => {
     try {
-        const { namespace, deployment, scaledObjectSpec }= req.body;
+        const { namespace, deployment, scaledObjectSpec } = req.body;
         const optimizationScore = req.weightedOptimizationScore;
 
         if (!namespace || !deployment || !scaledObjectSpec || !optimizationScore) {
@@ -74,7 +74,7 @@ kedaController.updateScaledObject = async (req, res, next) => {
 kedaController.deleteScaledObject = async (req, res, next) => {
     try {
         // Should we be using req.params?
-        const { namespace, scaledObjectName } = req.query;
+        const { namespace, scaledObjectName } = req.body;
 
         if (!namespace || !scaledObjectName ) {
             throw {

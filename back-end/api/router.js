@@ -18,20 +18,20 @@ router.get('fetch/kubecost/charts',  (req, res) => {
 })
 
 // CRUD Routes
-router.patch('/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, deploymentController.getAllDeployments,  (req, res) => {
-    return res.status(200).json({message: "Deployment and scaled object successfully updated.", response: res.locals.deployments})
+router.patch('/update', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.updateScaledObject, deploymentController.getDeployment,  (req, res) => {
+    return res.status(200).json({message: "Deployment and scaled object successfully updated.", response: res.locals.deployment})
 })
 
-router.post('/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, deploymentController.getAllDeployments, (req, res) => {
-    return res.status(200).json({message: "Deployment and scaled object successfully created.", response: res.locals.deployments})
+router.post('/create', optimizationController.calculateWeightedOptimizationScore, settingsController.updateOptimizationSettings, kedaController.createScaledObject, deploymentController.getDeployment, (req, res) => {
+    return res.status(200).json({message: "Deployment and scaled object successfully created.", response: res.locals.deployment})
 })
 
-router.delete('/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, deploymentController.getAllDeployments, (req, res) => {
-    return res.status(200).json({message: "Deployment and scaled object successfully deleted.", response: res.locals.deployments})
+router.delete('/delete', settingsController.deleteOptimizationSettings, kedaController.deleteScaledObject, deploymentController.getDeployment, (req, res) => {
+    return res.status(200).json({message: "Deployment and scaled object successfully deleted.", response: res.locals.deployment})
 })
 
-router.get('/read', deploymentController.getAllDeployments, (req, res) => {
-    return res.status(200).json({message: "Deployments successfully retrieved.", response: res.locals.deployments})
+router.get('/read', deploymentController.getDeployment, (req, res) => {
+    return res.status(200).json({message: "Deployment successfully retrieved.", response: res.locals.deployment})
 })
 
 // Development Assistance Routes
@@ -41,6 +41,10 @@ router.delete('/settings/flush', settingsController.flushRedisDb, (req, res) => 
 
 router.get('/settings/read/global', settingsController.getGlobalOptimizationSet, (req, res) => {
     return res.status(200).json(res.locals.result)
+})
+
+router.get('/read/deployment', deploymentController.getDeployment, (req, res) => {
+    return res.status(200).json({message: "Deployment successfully retrieved.", response: res.locals.deployment})
 })
 
 module.exports = router;
