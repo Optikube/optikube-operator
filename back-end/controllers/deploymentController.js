@@ -16,8 +16,8 @@ deploymentController.getAllDeployments = async (req, res, next) => {
 deploymentController.getDeployment = async (req ,res, next) => {
     try {
         const {namespace, deployment } = req.body;
-        console.log("namespace", namespace);
-        console.log("deployment", deployment);
+        // console.log("namespace", namespace);
+        // console.log("deployment", deployment);
         res.locals.deployment = await deploymentService.getDeployment(deployment, namespace);
 
         return next();

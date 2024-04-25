@@ -3,13 +3,15 @@ const settingsService = require('../services/settingsService');
 // settingsController.js handles initiation of settings logic.
 const settingsController = {};
 
-// Updates optimization settings for specified namespace and deployment.
+// Updates optimization settings for specified deployment.
 settingsController.updateOptimizationSettings = async (req, res, next) => {
     try {
+        // Destructures user/deployment inputs from front end.
         const { namespace, deployment, settings } = req.body;
+        // Access optimization score and strategy we previously stored in the reuqest body.
         const optimizationScore = req.weightedOptimizationScore;
         const optimizationStrategy = req.optimizationStrategy;
-        console.log("req.body", req.body);
+        // Validation check for user/deploment inputs that will be used in the settingsService.
         if (!namespace || !deployment || !settings || !optimizationScore || !optimizationStrategy) {
             throw {
                 origin: "settingsController.updateOptimizationSettings",
@@ -18,8 +20,9 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
                 message: "Missing required parameters."
             };
         }
-        // Assigning response object to res.locals to create stadardized reponse of data.
-        res.locals.response = await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
+        // Initiate process of updating optimization settings with user/deployment inputs.
+        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
+        // Proceed to next piece of middleware in chain.
         return next();
     } catch (error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
@@ -31,7 +34,9 @@ settingsController.deleteOptimizationSettings = async (req, res, next) => {
     try {
         // Assumes namespace and deployment are included in the req.params
         const {namespace, deployment } = req.body;
-
+        console.log("req.body", req.body);
+        console.log("namespace", namespace);
+        console.log("name", deployment);
         if (!namespace || !deployment) {
             throw {
                 origin: "settingsController.deleteOptimizationSettings",

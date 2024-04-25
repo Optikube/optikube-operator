@@ -79,9 +79,9 @@ class DeploymentService {
 
             if(isInGlobalOptimizeSet) {
                 const optimizationSettings = await settingsService.getOptimizationSettings(namespace, deploymentName);
-                console.log("optimization settings", optimizationSettings);
+                // console.log("optimization settings", optimizationSettings);
                 const kedaSpec = await kedaService.readScaledObject(namespace, deploymentName);
-                console.log("kedaSpec", kedaSpec)
+                // console.log("kedaSpec", kedaSpec)
 
                 deployment["optimization settings"] = {
                     "workload variability:": optimizationSettings.settings['workload variability'],

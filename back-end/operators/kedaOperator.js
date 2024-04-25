@@ -49,8 +49,11 @@ class KedaOperator {
 
     async updateScaledObject(namespace, deployment, scaledObject) {
         try {
+            console.log('namespace', namespace);
+            console.log('deployment', deployment);
+            console.log('scaledObject', scaledObject);
             const body = scaledObject;
-             await k8sApi.patchNamespacedCustomObject(
+            await k8sApi.patchNamespacedCustomObject(
                 'keda.sh',
                 'v1alpha1',
                 namespace,

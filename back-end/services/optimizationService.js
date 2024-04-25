@@ -4,15 +4,16 @@ const performanceStrategy = require('../optimizationStrats/PerformanceStrategy')
 const balancedStrategy = require('../optimizationStrats/BalancedStrategy');
 const costEfficientStrategy = require('../optimizationStrats/CostEfficientStrategy');
 
-// optimizationService.js uses user inputs to calculate optimization scores and perform optimization operations each hour.
+// optimizationService.js uses user/deployment inputs to calculate optimization scores and perform optimization operations each hour.
 
 class OptimizationService {
-    // Calculates optimization score based on user inputs, category weighting, and input ratings.
+    // Calculates optimization score based on user/deployment optimization settings, weightings, and scores.
     async calculateWeightedScore(userInput, categoryWeights, settingScores) {
         try {
+            // Start with weighted score and total weight of 0.
             let weightedScore = 0;
             let totalWeight = 0;
-
+            // Goes through each user/deployment setting and user the corresponding score and weighting adds weighted score.
             for (const category in userInput) {
                 if (settingScores[category].hasOwnProperty(userInput[category])) {
                     let rating = settingScores[category][userInput[category]];
@@ -22,18 +23,20 @@ class OptimizationService {
                     totalWeight += weight;
                 }
             }
-
+            // Normalizes weighted score if the total weighting is not 100%.
+            // This was initially for if user submitted custom weightings so it is not being utilization in current version of OptiKube.
             if (totalWeight !== 1) {
                 weightedScore = weightedScore / totalWeight;
             }
-
+            // Round the weighted score.
             const weightedScoreRounded = parseFloat(weightedScore.toFixed(1));
-            
+            // Assuming the opeartion is successful log the progress.
+            // This is to see and track the progress of operations
             if (weightedScoreRounded) {
                 console.log("Optimization score successfully calculated.")
             }
-
-            return (weightedScoreRounded)
+            // Return weighted score in proper format back to optimizationController.
+            return weightedScoreRounded;
         } catch (error) {
             throw {
                 origin: "OptimizationService.calculateWeightedScore",

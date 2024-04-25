@@ -6,35 +6,38 @@ class SettingsService {
     // Creates and updates optimization settings for the specified namespace and deployment.
     async updateOptimizationSettings(namespace, deployment, settings, optimizationScore, optimizeFlag) {
         try {
+            // Creates a key for redis data store consisting of namespace and deployment.
             const key = `namespace:${namespace}:deployment:${deployment}`;
+            // Creates a key for redis data store global set.
+            // This used to track which deployments are tagged to be optimized each hour - mainly a scalability feature.
             const globalOptimizeSetKey = `global:optimization_deployments`
-
-
-
+            // Construct the value to be stored in the redis data store for corresponding key.
             const value = JSON.stringify({ settings, optimizationScore, optimize: optimizeFlag, });
+            // Set redis key and value entry.
             const result = await redisClient.set(key, value);
-            console.log("namespace:", namespace, "deployment:", deployment);
+            // Initiate qualified deployment variable to add namespace and deployment to global optimization set if applicable.
             const qualifiedDeployment = `${namespace}:${deployment}`;
-            console.log("qualifiedDeployment", qualifiedDeployment);
-
+            // If deployment is tagged to be optimized add to global optimization set.
             if (optimizeFlag) {
                 await redisClient.sAdd(globalOptimizeSetKey, qualifiedDeployment);
                 console.log(`${qualifiedDeployment} successfully added to global optimization set.`)
             }
-
+            // If deployment isn't tagged to be optimized remove from global optimization set.
             if (!optimizeFlag) {
                 await redisClient.sRem(globalOptimizeSetKey, qualifiedDeployment);
             }
 
-            // Succes log
+            // If addition to redis data store is succesful log progress or throw an error.
             if ( result === "OK") {
                 console.log(`Optimization settings successfully updated for ${deployment}`);
-                return {
-                    "Namespace": namespace,
-                    "Deployment": deployment,
-                    "Optimization Settings": settings,
-                    "Optimization Actively Managed": optimizeFlag
-                };
+                return;
+            } else {
+                throw {
+                    origin: "Settings.updateOptimizationSettings",
+                    type: "Redis Error",
+                    status: 500,
+                    message: `Failed to add entry for ${key} to Redis data store.`
+                }
             }
         } catch (error) {
             throw {

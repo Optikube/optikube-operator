@@ -66,7 +66,7 @@ class DeploymentOperator {
     async getDeployment (deploymentName, namespace) {
         try {
             const response = await k8sApi.readNamespacedDeployment(deploymentName, namespace);
-            console.log("Response.body", response.body);
+            // console.log("Response.body", response.body);
             return response.body;
         } catch (error) {
             throw {
