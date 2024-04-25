@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: optikube-deployment
-  namespace: optikube-namespace
+  name: optikube-deploy
+  namespace: optikube
 spec:
   replicas: 1
   selector:
@@ -13,18 +13,23 @@ spec:
       labels:
         app: optikube
     spec:
-      serviceAccountName: optikube-service-account
+      serviceAccountName: optikube-svc-account
       containers:
-        - name: optikube4
-          image: gcr.io/hardy-nation-412201/optikube4.7.1
+        - name: optikube5
+          image: gcr.io/utility-folder-419300/optikube5.0.17
           ports:
             - containerPort: 8080
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: "6379"
           resources: 
             requests:
-              cpu: "200m"
-              memory: "400Mi"
+              cpu: "150m"
+              memory: "200Mi"
             limits:
-              cpu: "500m"
-              memory: "600Mi"
+              cpu: "300m"
+              memory: "400Mi"
       imagePullSecrets:
         - name: gcr-json-key

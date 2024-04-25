@@ -17,4 +17,4 @@ class OptimizationStrategyBase {
     }
 }
 
-module.exports = new OptimizationStrategyBase();
+module.exports = OptimizationStrategyBase;

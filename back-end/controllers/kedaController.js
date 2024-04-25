@@ -1,74 +1,96 @@
 
 const kedaService = require('../services/kedaService')
 
+// kedaController.js handles initiation of keda and scaled object logic.
 const kedaController = {};
-
+// Creates scaled object for specified deployment.
 kedaController.createScaledObject = async (req, res, next) => {
     try {
-        const settings = req.body.settings;
-        const optimizationScore = req.body.optimizationScore
-        await kedaService.createScaledObject(settings, optimizationScore)
+        const { namespace, deployment, scaledObjectSpec } = req.body;
+        const optimizationScore = req.weightedOptimizationScore;
+
+        if (!namespace || !deployment || !scaledObjectSpec || !optimizationScore) {
+            throw {
+                origin: "kedaController.createScaledObject",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
+        }
+        res.locals.response["Scaled Object"] = await kedaService.createScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore);
+
         return next();
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.createScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 }
-
+// Retrieves scaled object for specified deployment.
 kedaController.readScaledObject = async (req, res, next) => {
     try {
-        const target = req.body.target;
-        const scaledObject = await kedaService.readScaledObject(target);
-        res.locals.keda = scaledObject.body;
+        const {namespace, scaledObjectName } = req.query;
+
+        if (!namespace || !scaledObjectName) {
+            throw {
+                origin: "kedaController.readScaledObject",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
+        }
+
+        const scaledObject = await kedaService.readScaledObject(namespace, scaledObjectName);
+        res.locals.response = scaledObject.body;
         return next();
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.readScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 }
-
+// Updates scaled object for specified deployment.
 kedaController.updateScaledObject = async (req, res, next) => {
     try {
-        const patchPayload = {
-            // Payload to update scaled object
-            // take from req.body.settings
+        const { namespace, deployment, scaledObjectSpec }= req.body;
+        const optimizationScore = req.weightedOptimizationScore;
+
+        if (!namespace || !deployment || !scaledObjectSpec || !optimizationScore) {
+            throw {
+                origin: "kedaController.updateScaledObject",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
         }
-        const target = req.body.target;
-        await kedaService.updateScaledObject(target, patchPayload);
+
+        await kedaService.updateScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore);
+
         return next();
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.createScaledObject",
-            status: 400,
-            message: { err },
-        })
+    } catch(error) {
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 }
-
+// Deletes a scaled object for specified deployment.
 kedaController.deleteScaledObject = async (req, res, next) => {
     try {
-        const target = req.body.target;
-        kedaService.deleteScaledObject(target)
-        const response = await k8sApi.deleteScaledObject(
-            'keda.sh',
-            'v1alpha1',
-            req.body.targetNamespace,
-            'scaledobjects',
-            req.body.name,
-            {}
-        );
-    } catch(err) {
-        return next({
-            log: "Error occurred in kedaController.deleteScaledObject",
-            status: 400,
-            message: { err },
-        })
+        // Should we be using req.params?
+        const { namespace, scaledObjectName } = req.query;
+
+        if (!namespace || !scaledObjectName ) {
+            throw {
+                origin: "kedaController.createScaledObject",
+                type: "Validation Error",
+                status: 400,
+                message: "Missing required parameters."
+            };
+        }
+        
+        await kedaService.deleteScaledObject(namespace, scaledObjectName)
+
+        return next();
+    } catch(error) {
+        console.error(`${error.type} in ${error.origin}: ${error.message}`);
+        next(error);
     }
 }
 

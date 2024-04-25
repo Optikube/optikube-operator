@@ -5,7 +5,7 @@
 .DS_Store
 
 # package-lock
-package-lock.json
+
 
 # google-cloud items
 google-cloud-sdk-289.0.0-darwin-x86_64.tar.gz
@@ -16,3 +16,4 @@ google-cloud-sdk
 
 # service account secret key
 hardy-nation-412201-b57701317745.json
+optikubesvcaccount.json

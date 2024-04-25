@@ -26,7 +26,7 @@ class DeploymentOperator {
         } catch (error) {
             console.error(`Error getting updated deployment:${deployment} resources in updateDeploymentResources.`, error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error updating deployment resources.',
                 error: error.message 
             }
@@ -41,7 +41,7 @@ class DeploymentOperator {
         } catch (error) {
             console.error(`Error getting spec for deployment:${deployment} resources in updateDeploymentResources.`, error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error getting calculating weightedOptimzationScore.',
                 error: error.message 
             }

@@ -4,15 +4,19 @@ const performanceStrategy = require('../optimizationStrats/PerformanceStrategy')
 const balancedStrategy = require('../optimizationStrats/BalancedStrategy');
 const costEfficientStrategy = require('../optimizationStrats/CostEfficientStrategy');
 
+// optimizationService.js uses user inputs to calculate optimization scores and perform optimization operations each hour.
+
 class OptimizationService {
+    // Calculates optimization score based on user inputs, category weighting, and input ratings.
     async calculateWeightedScore(userInput, categoryWeights, settingScores) {
-        let weightedScore = 0;
-        let totalWeight = 0;
         try {
+            let weightedScore = 0;
+            let totalWeight = 0;
+
             for (const category in userInput) {
                 if (settingScores[category].hasOwnProperty(userInput[category])) {
-                    let rating = settingScores[category][userInput[category]]
-                    let weight = categoryWeights[category]
+                    let rating = settingScores[category][userInput[category]];
+                    let weight = categoryWeights[category];
 
                     weightedScore += rating * weight;
                     totalWeight += weight;
@@ -23,14 +27,19 @@ class OptimizationService {
                 weightedScore = weightedScore / totalWeight;
             }
 
-            return (weightedScore)
+            const weightedScoreRounded = parseFloat(weightedScore.toFixed(1));
+            
+            if (weightedScoreRounded) {
+                console.log("Optimization score successfully calculated.")
+            }
+            return (weightedScoreRounded)
 
         } catch (error) {
-            console.error('Error getting calculating weightedOptimzationScore.', error);
-            return {
-                succes: false,
-                log: 'Error getting calculating weightedOptimzationScore.',
-                error: error.message 
+            throw {
+                origin: "OptimizationService.calculateWeightedScore",
+                type: "Optimization Calculation Error",
+                error: error,
+                message: `Failed to calculate optimization score: ${error.message}`
             }
         }
     }
@@ -68,19 +77,14 @@ class OptimizationService {
             }
 
         } catch (error) {
-            console.error('Error getting executing optimizations in excuteHourlyOptimization.', error);
-            return {
-                succes: false,
-                log: 'Error getting excecuting excuteHourlyOptimization.',
-                error: error.message 
+            throw {
+                origin: "OptimizationService.executeHourlyOptimization",
+                type: "Optimization Error",
+                error: error,
+                message: `Failed to execute hourly optimization: ${error.message}`
             }
         }
-
     }
-
 }
-
-
-
 
 module.exports = new OptimizationService();

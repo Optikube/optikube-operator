@@ -3,6 +3,6 @@ kind: ClusterRole
 metadata:
   name: optikube-role
 rules:
-  - apiGroups: ["", apps, autoscaling]
+  - apiGroups: ["", apps, autoscaling, keda.sh]
     resources: ["*"]
     verbs: ["*"]

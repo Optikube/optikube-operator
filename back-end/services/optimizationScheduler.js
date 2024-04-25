@@ -11,7 +11,7 @@ class OptimizationScheduler {
             } catch (error) {
                 console.error('Error running optimization task in optimizationScheduler.', error);
                 return {
-                    succes: false,
+                    success: false,
                     log: 'Error running optimization task in optimizationScheduler.',
                     error: error.message
                 }
@@ -20,4 +20,4 @@ class OptimizationScheduler {
     }
 }
 
-module.exports = new OptimizatonScheduler();
+module.exports = new OptimizationScheduler();

@@ -11,7 +11,7 @@ class KubecostService {
         } catch (error) {
             console.error('Error getting Kubecost metrics in getKubecostMetricsForOptimization.', error);
             return {
-                succes: false,
+                success: false,
                 log: 'Error getting Kubecost metrics in getKubecostMetricsForOptimization.',
                 error: error.message 
             }
