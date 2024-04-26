@@ -5,13 +5,16 @@ kc.loadFromCluster();
 const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
 
 class DeploymentOperator {
+    // Updates specified deployments resources such as request and limits.
     async updateDeploymentResources(namespace, deployment, updatedResources) {
         try {
+            // Created patch payload with deployment updated resources.
             const patchPayload = {
                 op: 'replace',
                 path: '/spec/template/spec/containers/0/resources',
                 value: updatedResources,
             };
+            // Patches specified deployment in Kubernetes cluster.
             await k8sApi.patchNamespacedDeployment(
                 deployment,
                 namespace,
@@ -22,7 +25,7 @@ class DeploymentOperator {
                 undefined, // force
                 { headers: { "Content-type": k8s.PatchUtils.PATCH_FORMAT_JSON_PATCH } }
             );
-
+            return;
         } catch (error) {
             throw {
                 origin: "DeploymentOperator.updateDeploymentResources",
@@ -32,27 +35,12 @@ class DeploymentOperator {
             }
         }
     }
-
-
-    async fetchDeployment (namespace, deploymentName) {
-        try {
-            const response = k8sApi.readNamespacedDeployment(deploymentName, namespace);
-            return response.body.spec;
-        } catch (error) {
-            throw {
-                origin: "DeploymentOperator.fetchDeployment",
-                type: "Deployment Operator Error",
-                error: error,
-                message: `Failed to fetch deployment in Kubernetes cluster: ${error.message}`
-            }
-        }
-    }
+    // Retrieves all deployments from Kubernetes cluster.
     async getAllDeployments () {
         try {
+            // Destructures response and returns.
             const { body } = await k8sApi.listDeploymentForAllNamespaces();
-            // console.log("body", body);
             return body.items;
-
         } catch (error) {
             throw {
                 origin: "DeploymentOperator.getAllDeployments",
@@ -62,11 +50,11 @@ class DeploymentOperator {
             }
         }
     }
-
+    // Retrieves specified deployment from Kubernetes cluster.
     async getDeployment (deploymentName, namespace) {
         try {
+            // Assigns response and returns.
             const response = await k8sApi.readNamespacedDeployment(deploymentName, namespace);
-            // console.log("Response.body", response.body);
             return response.body;
         } catch (error) {
             throw {
@@ -77,8 +65,6 @@ class DeploymentOperator {
             }
         }
     }
-
-
 };
 
 module.exports = new DeploymentOperator();

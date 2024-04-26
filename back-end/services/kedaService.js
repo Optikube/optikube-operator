@@ -4,11 +4,13 @@ const costEfficientStrategy = require('../kedaStrats/costEfficientStrategy');
 const performanceStrategy = require('../kedaStrats/performanceStrategy');
 
 // kedaService.js uses inputs from kedaController.js to perform scaled object operations.
-
 class KedaService {
     // Determines scaling policies based on optimization score.
     async determineScalingPolicies(optimizationScore) {
         try {
+            // The following conditional blocks determine HPA scaling policies based on the optimization score.
+            // Depending on the strategy invoked a different HPA configuration will be returned.
+            // This will be used in scaled object creation or updates.
             let scalingPolicies;
             if (optimizationScore >= 1.0 && optimizationScore <= 1.6) {
                 scalingPolicies = await performanceStrategy.calculateScalingPolicies();
@@ -19,7 +21,7 @@ class KedaService {
             if (optimizationScore >= 2.4 && optimizationScore <= 3.0) {
                 scalingPolicies = await costEfficientStrategy.calculateScalingPolicies(); 
             }
-
+            // Validation check to ensure a scaling policy has been generated.
             if(scalingPolicies) {
                 console.log("Scaling policies determined for scaled object.")
                 return scalingPolicies;
@@ -43,8 +45,9 @@ class KedaService {
     // Creates a scaled object for specified deployment.
     async createScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore) {
         try {
+            // Initiate the determination of the KEDA scaled object's HPA configuration, referred to in this context as scaling policies.
             const scaledObjectConfig = await this.determineScalingPolicies(optimizationScore);
-               
+            // Create KEDA object spec utilizing deployment information, user input, and HPA scaling policies.
             const scaledObject = {
                 apiVersion: 'keda.sh/v1alpha1',
                 kind: 'ScaledObject',
@@ -78,7 +81,7 @@ class KedaService {
                     ],
                 },
             };
-
+            // Validation check for user/deployment inputs, scaled object, and optimization score that will be used in the kedaOperator.
             if (!namespace || !deployment || !scaledObject || !optimizationScore) {
                 throw {
                     origin: "kedaService.createScaledObject",
@@ -88,12 +91,11 @@ class KedaService {
                 };
             }
 
-            // console.log('Scaled Object', scaledObject);
+            // Initiate the creation of the KEDA scaled object using the kedaOperator.
             await kedaOperator.createScaledObject(scaledObject);
-
+            // Success log.
             console.log(`${scaledObject.metadata.name} successfully created for deployment:${deployment}`)
-            return scaledObject.metadata.name;
-
+            return;
         } catch (error) {
             throw {
                 origin: "KedaService.createScaledObject",
@@ -106,9 +108,13 @@ class KedaService {
     // Retrieves scaled object for specified deployment.
     async readScaledObject(namespace, deployment) {
         try {
+            // Initiate the retrieval of KEDA scaled object from kubernetesOperator.
             const { body } = await kedaOperator.readScaledObject(namespace, deployment);
+            // Assign response (body) to scaledObject to be returned.
             const scaledObject = body;
+            // Success log.
             console.log(`Retrieved scaled object ${scaledObject.metadata.name}`)
+            // Return retrieved KEDA scaled object.
             return scaledObject;
         } catch (error) {
             throw {
@@ -122,8 +128,9 @@ class KedaService {
     // Updates a scaled object for specified deployment.
     async updateScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore) {
         try {
+            // Initiate the determination of the KEDA scaled object's HPA configuration, referred to in this context as scaling policies.
             const scaledObjectConfig = await this.determineScalingPolicies(optimizationScore);
-            //Body
+            // Create KEDA object spec utilizing deployment information, user input, and HPA scaling policies.
             const scaledObject = {
                 apiVersion: 'keda.sh/v1alpha1',
                 kind: 'ScaledObject',
@@ -157,10 +164,11 @@ class KedaService {
                     ],
                 },
             };
-            const response = await kedaOperator.updateScaledObject(namespace, deployment, scaledObject);
+            // Initiate the update of the KEDA scaled object using the kedaOperator.
+            await kedaOperator.updateScaledObject(namespace, deployment, scaledObject);
+            // Success log.
             console.log(`${scaledObject.metadata.name} successfully updated.`)
             return;
-            // Should we be sending back a confirmation response??
         } catch (error) {
             throw {
                 origin: "KedaService.updateScaledObject",
@@ -173,8 +181,9 @@ class KedaService {
     // Deletes a scaled object for specified deployment.
     async deleteScaledObject(namespace, scaledObjectName) {
         try {
+            // Initiate the deletion of the KEDA scaled object using the kedaOperator.
             await kedaOperator.deleteScaledObject(namespace, scaledObjectName);
-            // Should we be sending back a confirmation response??
+            // Success log.
             console.log(`KedaService confirmation ${scaledObjectName} successfully deleted.`)
             return;
         } catch (error) {

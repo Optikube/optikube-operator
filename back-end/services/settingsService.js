@@ -26,7 +26,6 @@ class SettingsService {
             if (!optimizeFlag) {
                 await redisClient.sRem(globalOptimizeSetKey, qualifiedDeployment);
             }
-
             // If addition to redis data store is succesful log progress or throw an error.
             if ( result === "OK") {
                 console.log(`Optimization settings successfully updated for ${deployment}`);
@@ -51,18 +50,23 @@ class SettingsService {
     // Retrieves updated optimization settings for the specified namespace and deployment.
     async getOptimizationSettings(namespace, deploymentName) {
         try {
+            // Creates a key for redis data store consisting of namespace and deployment.
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
+            // Creates a key for redis data store global set.
             const globalOptimizeSetKey = `global:optimization_deployments`;
+            // Create target deployment to search global optimization for.
             const targetDeploymentName = `${namespace}:${deploymentName}`;
-
+            // Set result of the get request for specified deployment in redis data store.
             const result = await redisClient.get(key);
+            // Checks if deployment is in global optimization set - used to track whcih deployments are tagged to be optimized and have a KEDA scaled object.
             const isInGlobalOptimizeSet = await redisClient.sIsMember(globalOptimizeSetKey, targetDeploymentName);
- 
-            // In redis if the get method yields no results it return nulls.
+            // Parse result or return null for unsuccssful operation.
             const settings = result ? JSON.parse(result) : null;
+            // Succes log if settigns are returned.
             if (settings) {
                 console.log(`Optimization settings successfully retrieved for ${deploymentName}`)
             }
+            // Returns object with deployment's settings.
             return {
                 key,
                 ...settings,
@@ -79,9 +83,8 @@ class SettingsService {
     }
     // Retreieves all deployments tagged for hourly optimization.
     async getDeploymentsForOptimization() {
-        const globalOptimizeSetKey = `global:optimization_deployments`;
-
         try {
+            const globalOptimizeSetKey = `global:optimization_deployments`;
             const qualifiedDeploymentNames = await redisClient.sMembers(globalOptimizeSetKey);
             const deployments = [];
             // console.log("Deployments for optimization - names", qualifiedDeploymentNames);
@@ -110,21 +113,26 @@ class SettingsService {
     // Deletes exsting optimization settings for the specified namespace and deployment. 
     async deleteOptimizationSettings(namespace, deploymentName) {
         try {
+            // Establish key for redis data store to search for deployment.
             const key = `namespace:${namespace}:deployment:${deploymentName}`;
+            // Creates a key for redis data store global set.
             const globalOptimizeSetKey = `global:optimization_deployments`;
+            // Creates value to search global optimization set for.
             const qualifiedDeploymentName = `${namespace}:${deploymentName}`;
-
+            // Result of deleting specified deployment.
             const result = await redisClient.del(key);
+            // Result of removing specified deployment from global optimization set.
             const setResult = await redisClient.sRem(globalOptimizeSetKey, qualifiedDeploymentName);
             // This assumes all deployments to set to be optimized.
+            // Succes variable established based on both results.
             const success = result > 0 && setResult > 0;
-
+            // Succes or failure log based on success variable.
             if(!success) {
                 console.log(`No optimization settings found for ${deploymentName} for deletion.`)
             } else {
                 console.log(`Optimization settings for ${deploymentName} successfully deleted.`)
             }
-            return 
+            return; 
         } catch (error) {
             throw {
                 origin: "SettingsService.deleteOptimizationSettings",
@@ -137,6 +145,7 @@ class SettingsService {
     // Used in testing to clear redis db.
     async flushRedisDb() {
         try {
+            // Flushes all data from redis data store.
             await redisClient.flushDb();
             console.log("Current database cleared successfully.");
             return
@@ -151,10 +160,12 @@ class SettingsService {
     }
     // Used in testing to see the global optimization set.
     async getGlobalOptimizationSet() {
-        const globalOptimizeSetKey = `global:optimization_deployments`;
         try {
+             // Establish global optimize set key.
+            const globalOptimizeSetKey = `global:optimization_deployments`;
+            // Retrieves all members of the globla optimization set.
             const allOptimizedDeployments = await redisClient.sMembers(globalOptimizeSetKey);
-            console.log('All deployments set for optimization:', allOptimizedDeployments);
+            // Return all deployments with KEDA scaled object and tagged for optimization.
             return allOptimizedDeployments;
         } catch (error) {
             throw {
@@ -165,13 +176,16 @@ class SettingsService {
             }
         }
     }
+    // Checks if specified deployment and namespace are in the global optimization set.
     async isInGlobalOptimizeSet(namespace, deploymentName) {
         try {
+            // Establish global optimize set key.
             const globalOptimizeSetKey = `global:optimization_deployments`;
+            // Establish target deployment.
             const targetDeploymentName = `${namespace}:${deploymentName}`;
-
+            // Return the result (boolean) of method verifying if the deployment is in the global optimization set.
+            // If the deployment is in the global optimization set it is tagged to be optimized each hour and has a KEDA scaled object. 
             return await redisClient.sIsMember(globalOptimizeSetKey, targetDeploymentName);
-
         } catch (error) {
             throw {
                 origin: "SettingsService.isInGlobalOptimizeSet",
