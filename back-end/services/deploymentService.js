@@ -17,12 +17,8 @@ class DeploymentService {
                 "deployment": {
                     "name": item.metadata.name,
                     "namespace": item.metadata.namespace,
-                    "containers": item.spec.template.spec.containers.map(container => ({
-                        "name": container.name,
-                        "resources": container.resources,
-                        "requests": container.resources.requests,
-                        "limits": container.resources.limits,
-                    }))
+                    "requests": item.spec.template.spec.containers[0].resources.requests,
+                    "limit": item.spec.template.spec.containers[0].resources.limits,
                 }
             }));
             // Iterate back through the deployment array adding further details for those those tagged for optimization and those with a scaled object.
@@ -44,17 +40,17 @@ class DeploymentService {
                         "workload variability:": optimizationSettings.settings['workload variability'],
                         "application criticality:": optimizationSettings.settings['application criticality'],
                         "optimization priority:": optimizationSettings.settings['optimization priority'],
-                        "Optimization Score:": optimizationSettings.optimizationScore,
+                        "min cpu request": `${optimizationSettings.settings['min cpu request']}m`,
+                        "optimization score:": optimizationSettings.optimizationScore,
+                        "optimization strategy": optimizationSettings.optimizationStrategy,
                     }
                     // Create a "scaler settings" property for deployment and assign necessary properties for standardized response.
                     deployment["scaler settings"] = {
-                        "scaler settings:": {
-                            "name:": kedaSpec.metadata.name,
-                            "min replicas:": kedaSpec.spec.minReplicaCount,
-                            "max replicas:": kedaSpec.spec.maxReplicaCount,
-                            "cooldown period:": kedaSpec.spec.cooldownPeriod,
-                            "target cpu utilization:": kedaSpec.spec.triggers[0].metadata.value,
-                        }
+                        "name:": kedaSpec.metadata.name,
+                        "min replicas:": kedaSpec.spec.minReplicaCount,
+                        "max replicas:": kedaSpec.spec.maxReplicaCount,
+                        "cooldown period:": kedaSpec.spec.cooldownPeriod,
+                        "target cpu utilization:": kedaSpec.spec.triggers[0].metadata.value,
                     }       
                 }
             }
@@ -101,17 +97,17 @@ class DeploymentService {
                     "workload variability:": optimizationSettings.settings['workload variability'],
                     "application criticality:": optimizationSettings.settings['application criticality'],
                     "optimization priority:": optimizationSettings.settings['optimization priority'],
-                    "Optimization Score:": optimizationSettings.optimizationScore,
+                    "min cpu request": `${optimizationSettings.settings['min cpu request']}m`,
+                    "optimization score:": optimizationSettings.optimizationScore,
+                    "optimization strategy": optimizationSettings.optimizationStrategy,
                 }
                 // Create a "scaler settings" property for deployment and assign necessary properties for standardized response.
                 deployment["scaler settings"] = {
-                    "scaler settings:": {
-                        "name:": kedaSpec.metadata.name,
-                        "min replicas:": kedaSpec.spec.minReplicaCount,
-                        "max replicas:": kedaSpec.spec.maxReplicaCount,
-                        "cooldown period:": kedaSpec.spec.cooldownPeriod,
-                        "target cpu utilization:": kedaSpec.spec.triggers[0].metadata.value,
-                    }
+                    "name:": kedaSpec.metadata.name,
+                    "min replicas:": kedaSpec.spec.minReplicaCount,
+                    "max replicas:": kedaSpec.spec.maxReplicaCount,
+                    "cooldown period:": kedaSpec.spec.cooldownPeriod,
+                    "target cpu utilization:": kedaSpec.spec.triggers[0].metadata.value,
                 }     
             }
             // Succces log.    

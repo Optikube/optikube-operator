@@ -21,7 +21,7 @@ settingsController.updateOptimizationSettings = async (req, res, next) => {
             };
         }
         // Initiate process of updating optimization settings with user/deployment inputs.
-        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, true);
+        await settingsService.updateOptimizationSettings(namespace, deployment, settings, optimizationScore, optimizationStrategy, true);
         // Proceed to next piece of middleware in chain.
         return next();
     } catch (error) {

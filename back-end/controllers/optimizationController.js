@@ -26,6 +26,7 @@ optimizationController.calculateWeightedOptimizationScore = async (req, res, nex
         //     'workload variability' : 'steady',
         //     'application criticality' : 'critical',
         //     'optimization priority' : 'balanced',
+        //     'min cpu request': 100,
         // }
         
         // Assign optimization settings to user input variable.

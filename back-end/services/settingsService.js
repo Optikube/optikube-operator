@@ -4,7 +4,7 @@ const redisClient = require('../data/redisClient');
 
 class SettingsService {
     // Creates and updates optimization settings for the specified namespace and deployment.
-    async updateOptimizationSettings(namespace, deployment, settings, optimizationScore, optimizeFlag) {
+    async updateOptimizationSettings(namespace, deployment, settings, optimizationScore, optimizationStrategy, optimizeFlag) {
         try {
             // Creates a key for redis data store consisting of namespace and deployment.
             const key = `namespace:${namespace}:deployment:${deployment}`;
@@ -12,7 +12,7 @@ class SettingsService {
             // This used to track which deployments are tagged to be optimized each hour - mainly a scalability feature.
             const globalOptimizeSetKey = `global:optimization_deployments`
             // Construct the value to be stored in the redis data store for corresponding key.
-            const value = JSON.stringify({ settings, optimizationScore, optimize: optimizeFlag, });
+            const value = JSON.stringify({ settings, optimizationScore, optimizationStrategy, optimize: optimizeFlag });
             // Set redis key and value entry.
             const result = await redisClient.set(key, value);
             // Initiate qualified deployment variable to add namespace and deployment to global optimization set if applicable.

@@ -15,7 +15,7 @@ class OptimizationService {
             let totalWeight = 0;
             // Goes through each user/deployment setting and user the corresponding score and weighting adds weighted score.
             for (const category in userInput) {
-                if (settingScores[category].hasOwnProperty(userInput[category])) {
+                if (settingScores[category]?.hasOwnProperty(userInput[category])) {
                     let rating = settingScores[category][userInput[category]];
                     let weight = categoryWeights[category];
 
