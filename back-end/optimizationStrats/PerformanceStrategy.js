@@ -12,9 +12,11 @@ class PerformanceStrategy extends OptimizationStrategyBase {
 
             // correct the utilization if out of bounds
             if (cpuUtilizationAverage < 0.4  || cpuUtilizationAverage > 0.6) {
-                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.5, 50)
+                const cpuNewRequest = await this.calculateNewRequest(cpuCoreUsageAverage, 0.5, settings['min cpu request'])
+                console.log("Updated CPU Request:", cpuNewRequest);
                 // Potentially need to update scaled object target utilizaton to 50% to be sure if no already set initially
-                const cpuNewLimit = await this.calculateNewLimit(cpuNewRequest, 2.5)
+                const cpuNewLimit = await this.calculateNewLimit(cpuNewRequest, 2.5);
+                console.log("Updated CPU Limit:", cpuNewLimit);
                 const updatedResources = {
                     requests: { cpu: `${cpuNewRequest}m` },
                     limits: { cpu: `${cpuNewLimit}m` }

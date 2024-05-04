@@ -7,8 +7,9 @@ class OptimizationStrategyBase {
     async calculateNewRequest (cpuCoreUsageAverage, cpuNewTargetUtilization, minCpuRequest) {
         try {
             // Backs into new request number based off setting target CPU utilization
-            // This needs to align with the target CPU utilizataion in the scald object
+            // This needs to align with the target CPU utilizataion in the scaled object
             let cpuNewRequest = Math.round(cpuCoreUsageAverage / cpuNewTargetUtilization);
+            console.log("New CPU Request caclulated:", cpuNewRequest);
 
             return cpuNewRequest < minCpuRequest ? minCpuRequest : cpuNewRequest;
         } catch (error) {
@@ -23,6 +24,7 @@ class OptimizationStrategyBase {
     async calculateNewLimit (cpuNewRequest, cpuLimitBuffer) {
         try {
             let cpuNewLimit = Math.round(cpuNewRequest * cpuLimitBuffer);
+            console.log("calculated new CPU limit", cpuNewLimit);
             return cpuNewLimit;
         } catch (error) {
             throw {

@@ -123,6 +123,10 @@ class DeploymentService {
             }
         }
     }
+
+    async getDeploymentTargetContainer(deploymentName, namespace){
+
+    }
 }
 
 module.exports = new DeploymentService();

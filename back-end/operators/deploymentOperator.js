@@ -8,25 +8,48 @@ class DeploymentOperator {
     // Updates specified deployments resources such as request and limits.
     async updateDeploymentResources(namespace, deployment, updatedResources) {
         try {
+            // Fetchs the current deployment from Kubernetes and it's configuration.
+            const deploymentConfig = await this.getDeployment(deployment, namespace);
+            // Destructure the container whose resources will be updated in the deployment.
+            const container = deploymentConfig.spec.template.spec.containers[0]
             // Created patch payload with deployment updated resources.
-            const patchPayload = {
-                op: 'replace',
-                path: '/spec/template/spec/containers/0/resources',
-                value: updatedResources,
+            const body = {
+                spec: {
+                    template: {
+                        spec: {
+                            containers: [
+                                {   name: container.name,
+                                    image: container.image,
+                                    resources: updatedResources
+                                }
+                            ]
+                        }
+                    }
+                }
             };
             // Patches specified deployment in Kubernetes cluster.
-            await k8sApi.patchNamespacedDeployment(
+            const updatedDeployment = await k8sApi.patchNamespacedDeployment(
                 deployment,
                 namespace,
-                patchPayload,
-                undefined, // pretty
-                undefined, // dryRun
-                undefined, // fieldManager
-                undefined, // force
-                { headers: { "Content-type": k8s.PatchUtils.PATCH_FORMAT_JSON_PATCH } }
+                body,
+                undefined,  // pretty
+                undefined,  // dryRun
+                undefined,  // fieldManager
+                undefined,  // fieldValidation
+                undefined,  // force
+                {headers: { "Content-Type": "application/merge-patch+json"}}
             );
-            return;
+
+            if (updatedDeployment) {
+                console.log(`${deployment} resources successfully updated by operator in Kubernetes cluster.`);
+            }
+            return; 
         } catch (error) {
+            console.error('Error updating deployment:', error);
+            if (error.response) {
+                console.error('HTTP status:', error.response.statusCode);
+                console.error('HTTP body:', error.response.body);
+            }
             throw {
                 origin: "DeploymentOperator.updateDeploymentResources",
                 type: "Deployment Operator Error",

@@ -92,11 +92,10 @@ class SettingsService {
             for(const qualifiedDeployment of qualifiedDeploymentNames) {
                 const [namespace, deploymentName] = qualifiedDeployment.split(":");
                 const response = await this.getOptimizationSettings(namespace, deploymentName);
-                console.log("response", response);
-                const { settings } = response;
-          
-                if (settings && settings.optimize) {
-                    deployments.push({ namespace, deploymentName, ...settings, });
+                const { settings, optimize, optimizationScore } = response;
+       
+                if (settings && optimize && optimizationScore) {
+                    deployments.push({ namespace, deploymentName, settings, optimizationScore });
                 }
             }
             console.log("Deployments for optimization", deployments);

@@ -31,7 +31,7 @@ class OptimizationService {
             // Round the weighted score.
             const weightedScoreRounded = parseFloat(weightedScore.toFixed(1));
             // Assuming the opeartion is successful log the progress.
-            // This is to see and track the progress of operations
+            // This is to see and track the progress of operations.
             if (weightedScoreRounded) {
                 console.log("Optimization score successfully calculated.")
             }
@@ -55,32 +55,26 @@ class OptimizationService {
             const targetDeployments = await settingsService.getDeploymentsForOptimization()
             //Go through and optimize 
             for (const deployment of targetDeployments) {
-                console.log("taregetDeployment", targetDeployments);
-                console.log("deployment", targetDeployments[0]);
-                const { deploymentName, optimizationScore } = deployment;
+                console.log(`Starting optimization for ${deployment.deploymentName}`);
+                const { namespace, deploymentName, settings, optimizationScore } = deployment;
                 // Accessing just the namespace and deployment data
-                const deploymentKubecostData = kubeCostMetrics[`deployment/${deployment.deploymentName}`]
-                console.log("deploymentKubecostData", deploymentKubecostData);
-                console.log("optimizationScore", optimizationScore);
-                console.log("deploymentKubecostData.properties.controller", deploymentKubecostData.properties.controller);
+                const deploymentKubecostData = kubeCostMetrics[`deployment/${deploymentName}`]
                 // Checks the the data we're looking at is the 
                 if (optimizationScore && deploymentKubecostData.properties.controller === deploymentName) {
                     if (optimizationScore >= 1.0 && optimizationScore <= 1.6) {
-                        console.log("inside optimization for strat")
-                        // Invoke performance strategy
-                        // Should pass in just the deployments namespace, name, metrics from kubeCost to the strategy
-                        performanceStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData);
+                        // Implement performance strategy.
+                        // Should pass in just the deployment's namespace, name, optimization settings, and metrics from kubeCost to the strategy.
+                        await performanceStrategy.optimize(namespace, deploymentName, settings, deploymentKubecostData);
                     }
                     if (optimizationScore >= 1.7 && optimizationScore <= 2.3) {
-                        console.log("inside optimization for strat")
-                        // Invoke mixed strategy
-                        balancedStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData)
-
+                        // Implement balanced strategy.
+                        // Should pass in just the deployment's namespace, name, optimization settings, and metrics from kubeCost to the strategy.
+                        await balancedStrategy.optimize(namespace, deploymentName, settings, deploymentKubecostData);
                     }
                     if (optimizationScore >= 2.4 && optimizationScore <= 3.0) {
-                        console.log("inside optimization for strat")
-                        // Invoke cost efficient strategy
-                        costEfficientStrategy.optimize(deployment.namespace, deployment.deploymentName, deployment.settings, deploymentKubecostData)
+                        // Implement cost efficient strategy.
+                        // Should pass in just the deployment's namespace, name, optimization settings, and metrics from kubeCost to the strategy.
+                        await costEfficientStrategy.optimize(namespace, deploymentName, settings, deploymentKubecostData);
                     }
                 } else {
                     return `Error accessing deployment:${deployment} data in Kubecost metrics when performing hourly optimization`
