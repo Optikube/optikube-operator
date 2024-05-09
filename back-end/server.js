@@ -5,7 +5,7 @@ const cors = require('cors');
 const optimizationScheduler = require('./services/optimizationScheduler');
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.SERVER_PORT || 8080;
 // Enable CORS for all routes
 app.use(cors());
 // Parse all responses in JSON
@@ -20,7 +20,13 @@ optimizationScheduler.start()
 // Route handlers
 app.use('/api', appsRouter)
 
-
+// Readiness and Liveness Probes 
+app.use('health', (req, res) => {
+  res.send('OK');
+});
+app.use('ready', (req, res) => {
+  res.send('OK')
+});
 
 // Catch all route handler for any requests to unknown route.
 app.use('/', (req, res) => {
@@ -54,13 +60,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}...`);
 });
-
-
-//Needed Endpoints
-// -Connect to K8s cluster
-// -Retrieve namespaces, deployments, etc.
-// -Scaling
-  // -Create or update scaled object (HPA and CRD)
-  // -Transfer HPA to KEDA management
-// Cluster management 
-  // 
