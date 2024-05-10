@@ -20,11 +20,12 @@ optimizationScheduler.start()
 // Route handlers
 app.use('/api', appsRouter)
 
-// Readiness and Liveness Probes 
-app.use('health', (req, res) => {
+// Liveness Probe
+app.use('/health', (req, res) => {
   res.send('OK');
 });
-app.use('ready', (req, res) => {
+// Readiness Probe
+app.use('/ready', (req, res) => {
   res.send('OK')
 });
 
