@@ -1,14 +1,15 @@
-
 const kedaService = require('../services/kedaService')
 
-// kedaController.js handles initiation of keda and scaled object logic.
+// kedaController.js handles initiation of KEDA and scaled object logic.
 const kedaController = {};
-// Creates scaled object for specified deployment.
+// Creates KEDA scaled object for specified deployment.
 kedaController.createScaledObject = async (req, res, next) => {
     try {
+        // Destructures user/deployment inputs from front end.
         const { namespace, deployment, scaledObjectSpec } = req.body;
+        // Access optimization score and strategy we previously stored in the request body.
         const optimizationScore = req.weightedOptimizationScore;
-
+        // Validation check for user/deployment inputs that will be used in the kedaService.
         if (!namespace || !deployment || !scaledObjectSpec || !optimizationScore) {
             throw {
                 origin: "kedaController.createScaledObject",
@@ -17,19 +18,21 @@ kedaController.createScaledObject = async (req, res, next) => {
                 message: "Missing required parameters."
             };
         }
-        res.locals.response["Scaled Object"] = await kedaService.createScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore);
-
+        // Initiate process of creating the configuration of KEDA scaled object with user/deployment inputs and optimization score.
+        await kedaService.createScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore);
+        // Proceed to next piece of middleware in chain.
         return next();
     } catch(error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
         next(error);
     }
 }
-// Retrieves scaled object for specified deployment.
+// Retrieves KEDA scaled object for specified deployment.
 kedaController.readScaledObject = async (req, res, next) => {
     try {
+        // Destructures user/deployment inputs from front end.
         const {namespace, deployment } = req.query;
-
+        // Validation check for user/deployment inputs that will be used in the kedaService.
         if (!namespace || !deployment) {
             throw {
                 origin: "kedaController.readScaledObject",
@@ -47,12 +50,14 @@ kedaController.readScaledObject = async (req, res, next) => {
         next(error);
     }
 }
-// Updates scaled object for specified deployment.
+// Updates KEDA scaled object for specified deployment.
 kedaController.updateScaledObject = async (req, res, next) => {
     try {
-        const { namespace, deployment, scaledObjectSpec }= req.body;
+        // Destructures user/deployment inputs from front end.
+        const { namespace, deployment, scaledObjectSpec } = req.body;
+        // Access optimization score and strategy we previously stored in the request body.
         const optimizationScore = req.weightedOptimizationScore;
-
+        // Validation check for user/deployment inputs that will be used in the kedaService.
         if (!namespace || !deployment || !scaledObjectSpec || !optimizationScore) {
             throw {
                 origin: "kedaController.updateScaledObject",
@@ -61,21 +66,21 @@ kedaController.updateScaledObject = async (req, res, next) => {
                 message: "Missing required parameters."
             };
         }
-
+        // Initiate process of updating KEDA scaled object with user/deployment inputs and optimization score.
         await kedaService.updateScaledObject(namespace, deployment, scaledObjectSpec, optimizationScore);
-
+        // Proceed to next piece of middleware in chain.
         return next();
     } catch(error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
         next(error);
     }
 }
-// Deletes a scaled object for specified deployment.
+// Deletes KEDA scaled object for specified deployment.
 kedaController.deleteScaledObject = async (req, res, next) => {
     try {
-        // Should we be using req.params?
-        const { namespace, scaledObjectName } = req.query;
-
+        // Destructures user/deployment inputs from front end.
+        const { namespace, scaledObjectName } = req.body;
+        // Validation check for user/deployment inputs that will be used in the kedaService.
         if (!namespace || !scaledObjectName ) {
             throw {
                 origin: "kedaController.createScaledObject",
@@ -84,16 +89,15 @@ kedaController.deleteScaledObject = async (req, res, next) => {
                 message: "Missing required parameters."
             };
         }
-        
+        // Initiate process of deleting KEDA scaled object with namespace and scaled object name.
         await kedaService.deleteScaledObject(namespace, scaledObjectName)
-
+        // Proceed to next piece of middleware in chain.
         return next();
     } catch(error) {
         console.error(`${error.type} in ${error.origin}: ${error.message}`);
         next(error);
     }
 }
-
 
 
 module.exports = kedaController;
