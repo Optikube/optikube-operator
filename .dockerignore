@@ -19,7 +19,7 @@ front-end/
 dist/
 
 # service account secret key
-hardy-nation-412201-b57701317745.json
+optikubesvcaccount.json
 
 # Exclude yaml files for K8s configs
 kubernetes/
