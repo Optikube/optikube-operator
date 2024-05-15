@@ -1,0 +1,54 @@
+{
+  "name": "optikube",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oslabs-beta/OptiKube"
+  },
+  "keywords": [
+    "optikube",
+    "OptiKube"
+  ],
+  "author": "OptiKube Team",
+  "dependencies": {
+    "@kubernetes/client-node": "^0.20.0",
+    "axios": "^1.6.8",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "node": "^18.20.0",
+    "node-cron": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "redis": "^4.6.13"
+  },
+  "contributors": [
+    {
+      "name": "Andy Guajardo",
+      "email": "andymattgee@users.noreply.github.com"
+    },
+    {
+      "name": "Cheryl Lee",
+      "email": "yli-yanchen@user.noreply.github.com"
+    },
+    {
+      "name": "George Huang",
+      "email": "gzfh24@users.noreply.github.com"
+    },
+    {
+      "name": "James Shea",
+      "email": "JamesSheaDev@users.noreply.github.com"
+    },
+    {
+      "name": "Josh Bajarias",
+      "email": "jawshhhhhhhh@users.noreply.github.com"
+    }
+  ],
+  "license": "MIT",
+  "private": true
+}

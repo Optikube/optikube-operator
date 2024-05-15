@@ -1,0 +1,28 @@
+# .dockerignore
+
+# Exclude node_modules directory
+node_modules
+
+#Exclude development and build files
+.git
+.gitignore
+.dockerignore
+.babelrc
+
+postcss.config
+tailwind.config
+webpack.config
+
+build/
+client/
+front-end/
+dist/
+
+# service account secret key
+optikubesvcaccount.json
+
+# Exclude yaml files for K8s configs
+kubernetes/
+
+# Exclude README.md
+README.md
