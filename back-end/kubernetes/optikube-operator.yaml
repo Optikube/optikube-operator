@@ -1,0 +1,66 @@
+# Optikube Operator Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optikube-operator
+  namespace: optikube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: optikube-operator
+  template:
+    metadata:
+      labels:
+        app: optikube-operator
+    spec:
+      serviceAccountName: optikube-svc-account
+      containers:
+        - name: optikube-operator
+          image: optikube/optikube-operator:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 10      
+            periodSeconds: 10
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: REDIS_HOST
+              value: optikube-redis
+            - name: REDIS_PORT
+              value: "6379"
+          resources: 
+            requests:
+              cpu: "150m"
+              memory: "150Mi"
+            limits:
+              cpu: "250m"
+              memory: "250Mi"
+---
+# Optikube Operator Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: optikube-operator-svc
+  namespace: optikube
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: optikube-operator

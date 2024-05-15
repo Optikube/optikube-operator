@@ -1,0 +1,38 @@
+# Optikube Redis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: optikube-redis
+  namespace: optikube
+spec:
+  selector:
+    matchLabels:
+      app: optikube-redis
+  template:
+    metadata:
+      labels:
+        app: optikube-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "100m"
+---
+# Optikube Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: optikube-redis
+  namespace: optikube
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: optikube-redis

@@ -1,3 +1,4 @@
+# Optikube Role
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -6,3 +7,17 @@ rules:
   - apiGroups: ["", apps, autoscaling, keda.sh]
     resources: ["*"]
     verbs: ["*"]
+---
+# Optikube Rolebinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: optikube-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: optikube-svc-account
+  namespace: optikube
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: optikube-role
