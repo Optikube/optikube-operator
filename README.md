@@ -2,6 +2,7 @@
 
 OptiKube Operator is custom Kubernetes operator for [OptiKube](https://github.com/Optikube), an open-source tool to optimize and manage Kubernetes resources. For general information about OptiKube please see the [organization page](https://github.com/Optikube) for more details on what OptiKube can do for you or contact optikube@gmail.com for assistance.
 
+---
 ## Tech Stack
 ![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/kubernetes-326ce5.svg?&style=for-the-badge&logo=kubernetes&logoColor=white)
@@ -74,6 +75,7 @@ OptiKube configures KEDA scalers based on three main optimization strategies: Pe
 
 ### Impact of Optimization Strategies on KEDA Scalers
 The choice of optimization strategy directly influences how KEDA scalers are configured and behave. This alignment ensures that the scaling mechanisms are perfectly suited to the operational priorities of the deployment—whether the focus is on maintaining high performance, reducing costs, or balancing the two. Through intelligent scaling decisions influenced by these strategies, OptiKube enhances resource utilization and operational efficiency across Kubernetes environments.
+
 ---
 ## Hourly Optimization in OptiKube
 OptiKube’s operator is designed to continuously refine and optimize Kubernetes deployments to ensure efficient resource usage and cost-effectiveness. Here's an in-depth exploration of the hourly optimization process facilitated by the Optikube operator backend, highlighting the sophisticated mechanism it uses to dynamically adjust deployment resources based on real-time data and predefined user settings.
