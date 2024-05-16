@@ -78,6 +78,8 @@ OptiKube enhances Kubernetes deployments by implementing an hourly optimization 
 
 ### Steps Involved in the Hourly Optimization
 
+### Steps Involved in the Hourly Optimization
+
 **1. Retrieval of Optimization Parameters:**
   - The operator fetches the optimization settings, the associated optimization score, and the chosen strategy for each deployment tagged for optimization.
 **2. Data Collection from Kubecost:**
@@ -88,7 +90,7 @@ OptiKube enhances Kubernetes deployments by implementing an hourly optimization 
     - **Performance Strategy:** Implements a larger gap between the limits and the request to accommodate sudden spikes without degradation in performance.
     - **Balanced Strategy:** Sets a moderate gap, balancing between performance needs and cost-efficiency.
     - **Cost Efficient Strategy:** Maintains a smaller gap, prioritizing cost savings by limiting the buffer above the request.
-- **4. Setting the Minimum Resource Floor:**
+**4. Setting the Minimum Resource Floor:**
   - The user inputs a minimum request level as a safety net to prevent the deployment’s resources from being scaled down too aggressively, ensuring that the application or service remains responsive even during periods of low usage.
 
 ### Impact and Benefits of Hourly Optimization
