@@ -2,10 +2,12 @@
 
 OptiKube Operator is custom Kubernetes operator for [OptiKube](https://github.com/Optikube), an open-source tool to optimize and manage Kubernetes resources. For general information about OptiKube please see the [organization page](https://github.com/Optikube) for more details on what OptiKube can do for you or contact optikube@gmail.com for assistance.
 
+
 ## Overview
 The operator component of OptiKube is responsible for the core functionalities that drive resource optimization and autoscaling. It enables:
 - **Creation of KEDA Autoscalers:** Based on user-submitted settings that define the sensitivity and responsiveness of the scaling actions.
 - **Hourly Resource Optimization:** Regularly queries Kubecost to gather data and optimizes resource allocation for deployments with active KEDA scalers based on historical and current usage statistics.
+
 
 ## Optimization Settings in OptiKube
 Optimization settings in OptiKube are pivotal for tailoring Kubernetes deployment strategies according to specific needs, enabling a more effective management of resources and costs. These settings are derived from user inputs during the creation of Kubernetes Event-Driven Autoscalers (KEDA) and are crucial for defining the operational behavior of these scalers. Here's an in-depth look at how these settings influence the configuration and operation of the OptiKube operator.
@@ -35,6 +37,7 @@ Each optimization strategy applies distinct policies and thresholds that impact 
 - **Balanced:** This flexible approach adjusts target utilization and request/limit settings to maintain adequate performance while managing costs, suitable for variably loaded systems.
 - **Performance:** Emphasizes availability of resources with lower utilization targets and more generous requests and limits, ensuring that critical and dynamic workloads are supported without compromise
 
+
 ## KEDA Scalers in OptiKube
 In Optikube, the operator backend plays a crucial role in facilitating the creation and configuration of Kubernetes Event-Driven Autoscalers (KEDA), which are essential for achieving dynamic and responsive scaling. This capability allows Optikube to utilize resources more efficiently and adapt quickly to changing workload demands. Here's an in-depth look at how KEDA scalers are integrated within Optikube and how they are configured based on different optimization strategies.
 
@@ -63,5 +66,6 @@ Optikube configures KEDA scalers based on three main optimization strategies: Pe
 
 ### Impact of Optimization Strategies on KEDA Scalers
 The choice of optimization strategy directly influences how KEDA scalers are configured and behave. This alignment ensures that the scaling mechanisms are perfectly suited to the operational priorities of the deployment—whether the focus is on maintaining high performance, reducing costs, or balancing the two. Through intelligent scaling decisions influenced by these strategies, Optikube enhances resource utilization and operational efficiency across Kubernetes environments.
+
 
 ## Hourly Resource Optimization
