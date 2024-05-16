@@ -13,7 +13,7 @@ The operator component of OptiKube is responsible for the core functionalities t
 Optimization settings in OptiKube are pivotal for tailoring Kubernetes deployment strategies according to specific needs, enabling a more effective management of resources and costs. These settings are derived from user inputs during the creation of Kubernetes Event-Driven Autoscalers (KEDA) and are crucial for defining the operational behavior of these scalers. Here's an in-depth look at how these settings influence the configuration and operation of the OptiKube operator.
 
 ### Overview
-When users configure a KEDA scaler in Optikube, they input various optimization parameters that directly influence how the application behaves under different load conditions. Based on these inputs, a weighted optimization score is calculated and stored along with the configuration settings in a Redis database. This score is instrumental in determining which of the three optimization strategies—Balanced, Cost Efficient, and Performance—is applied to the Kubernetes deployment.
+When users configure a KEDA scaler in OptiKube, they input various optimization parameters that directly influence how the application behaves under different load conditions. Based on these inputs, a weighted optimization score is calculated and stored along with the configuration settings in a Redis database. This score is instrumental in determining which of the three optimization strategies—Balanced, Cost Efficient, and Performance—is applied to the Kubernetes deployment.
 
 ### Optimization Strategies
 Each optimization strategy applies distinct policies and thresholds that impact the autoscaling behavior:
@@ -39,13 +39,13 @@ Each optimization strategy applies distinct policies and thresholds that impact 
 
 
 ## KEDA Scalers in OptiKube
-In Optikube, the operator backend plays a crucial role in facilitating the creation and configuration of Kubernetes Event-Driven Autoscalers (KEDA), which are essential for achieving dynamic and responsive scaling. This capability allows Optikube to utilize resources more efficiently and adapt quickly to changing workload demands. Here's an in-depth look at how KEDA scalers are integrated within Optikube and how they are configured based on different optimization strategies.
+In OptiKube, the operator backend plays a crucial role in facilitating the creation and configuration of Kubernetes Event-Driven Autoscalers (KEDA), which are essential for achieving dynamic and responsive scaling. This capability allows OptiKube to utilize resources more efficiently and adapt quickly to changing workload demands. Here's an in-depth look at how KEDA scalers are integrated within OptiKube and how they are configured based on different optimization strategies.
 
 ### KEDA Scalers
-KEDA scalers are designed to adjust the number of pods in a Kubernetes deployment dynamically based on the actual usage of application resources. The Optikube backend utilizes these scalers to ensure that resource allocation is both efficient and responsive to the needs of the applications it manages. This is achieved by configuring KEDA scalers according to optimization strategies derived from user input, which determine the behavior of autoscaling actions. 
+KEDA scalers are designed to adjust the number of pods in a Kubernetes deployment dynamically based on the actual usage of application resources. The OptiKube backend utilizes these scalers to ensure that resource allocation is both efficient and responsive to the needs of the applications it manages. This is achieved by configuring KEDA scalers according to optimization strategies derived from user input, which determine the behavior of autoscaling actions. 
 
 ### Configuring KEDA Scalers Based on Optimization Strategies
-Optikube configures KEDA scalers based on three main optimization strategies: Performance, Cost Efficiency, and Balanced. Each strategy tailors the scaling behavior to meet specific operational goals:
+OptiKube configures KEDA scalers based on three main optimization strategies: Performance, Cost Efficiency, and Balanced. Each strategy tailors the scaling behavior to meet specific operational goals:
 
 #### Performance Strategy
 - **Lower CPU Utilization:** Setting a lower CPU utilization threshold allows the scaler to activate additional resources more quickly, ensuring that performance remains high even under increased load.
@@ -65,7 +65,35 @@ Optikube configures KEDA scalers based on three main optimization strategies: Pe
 - **Moderates between Performance and Cost Efficiency:** This strategy takes a middle path, incorporating elements from both the performance and cost-efficient strategies. It aims to provide a reasonable level of responsiveness and performance while also considering cost implications.
 
 ### Impact of Optimization Strategies on KEDA Scalers
-The choice of optimization strategy directly influences how KEDA scalers are configured and behave. This alignment ensures that the scaling mechanisms are perfectly suited to the operational priorities of the deployment—whether the focus is on maintaining high performance, reducing costs, or balancing the two. Through intelligent scaling decisions influenced by these strategies, Optikube enhances resource utilization and operational efficiency across Kubernetes environments.
+The choice of optimization strategy directly influences how KEDA scalers are configured and behave. This alignment ensures that the scaling mechanisms are perfectly suited to the operational priorities of the deployment—whether the focus is on maintaining high performance, reducing costs, or balancing the two. Through intelligent scaling decisions influenced by these strategies, OptiKube enhances resource utilization and operational efficiency across Kubernetes environments.
 
 
-## Hourly Resource Optimization
+## Hourly Optimization in OptiKube
+OptiKube’s operator is designed to continuously refine and optimize Kubernetes deployments to ensure efficient resource usage and cost-effectiveness. Here's an in-depth exploration of the hourly optimization process facilitated by the Optikube operator backend, highlighting the sophisticated mechanism it uses to dynamically adjust deployment resources based on real-time data and predefined user settings.
+
+### Overview of Hourly Optimization Process
+OptiKube enhances Kubernetes deployments by implementing an hourly optimization cycle. This process is specifically tailored for deployments that are:
+- **Tagged for Optimization:** These are deployments equipped with a KEDA scaler and have had user-defined optimization settings applied.
+- **Monitored for Resource Usage:** The operator retrieves critical data on these tagged deployments to make informed decisions about resource allocation.
+
+### Steps Involved in the Hourly Optimization
+
+**1. Retrieval of Optimization Parameters:**
+  - The operator fetches the optimization settings, the associated optimization score, and the chosen strategy for each deployment tagged for optimization.
+**2. Data Collection from Kubecost:**
+  - For these deployments, the operator queries Kubecost to gather data on resource usage over the past six hours. This historical usage data is crucial for assessing current needs and predicting future demands.
+**3. Calculation of New Resource Requests and Limits:**
+  - **Resource Requests:** The operator calculates new resource requests by analyzing the actual usage data collected. It selects a request level that aims to align more closely with the target utilization percentage, ensuring that the deployments are neither underutilized nor overstrained.
+  - **Resource Limits:** Based on the chosen optimization strategy, the operator sets new limits to provide a buffer over the calculated request. This buffer varies according to the optimization strategy:
+    - **Performance Strategy:** Implements a larger gap between the limits and the request to accommodate sudden spikes without degradation in performance.
+    - **Balanced Strategy:** Sets a moderate gap, balancing between performance needs and cost-efficiency.
+    - **Cost Efficient Strategy:** Maintains a smaller gap, prioritizing cost savings by limiting the buffer above the request.
+- **4. Setting the Minimum Resource Floor:**
+  - The user inputs a minimum request level as a safety net to prevent the deployment’s resources from being scaled down too aggressively, ensuring that the application or service remains responsive even during periods of low usage.
+
+### Impact and Benefits of Hourly Optimization
+This proactive approach to managing resources not only aligns resource allocation more accurately with actual needs but also prevents scenarios where deployments are either over-provisioned (leading to wasted resources and increased costs) or under-provisioned (potentially compromising performance and availability). By adjusting the deployments hourly, Optikube ensures:
+
+- **Cost Efficiency:** Reduces costs by avoiding unnecessary resource allocation.
+- **Performance Assurance:** Maintains adequate resources to handle peak loads efficiently.
+- **Resource Optimization:** Ensures optimal use of resources by adjusting to the actual usage patterns and efficiency metrics.
