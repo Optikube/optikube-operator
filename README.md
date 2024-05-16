@@ -2,6 +2,15 @@
 
 OptiKube Operator is custom Kubernetes operator for [OptiKube](https://github.com/Optikube), an open-source tool to optimize and manage Kubernetes resources. For general information about OptiKube please see the [organization page](https://github.com/Optikube) for more details on what OptiKube can do for you or contact optikube@gmail.com for assistance.
 
+## Tech Stack
+![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/kubernetes-326ce5.svg?&style=for-the-badge&logo=kubernetes&logoColor=white)
+![Helm](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=Helm&labelColor=0F1689)
+![Redis](https://img.shields.io/badge/redis-CC0000.svg?&style=for-the-badge&logo=redis&logoColor=white)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-000000?style=for-the-badge&logo=prometheus&labelColor=000000)
+![Grafana](https://img.shields.io/badge/Grafana-F2F4F9?style=for-the-badge&logo=grafana&logoColor=orange&labelColor=F2F4F9)
 
 ## Overview
 The operator component of OptiKube is responsible for the core functionalities that drive resource optimization and autoscaling. It enables:
