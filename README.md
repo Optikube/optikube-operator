@@ -35,7 +35,33 @@ Each optimization strategy applies distinct policies and thresholds that impact 
 - **Balanced:** This flexible approach adjusts target utilization and request/limit settings to maintain adequate performance while managing costs, suitable for variably loaded systems.
 - **Performance:** Emphasizes availability of resources with lower utilization targets and more generous requests and limits, ensuring that critical and dynamic workloads are supported without compromise
 
-## Autoscalers
+## KEDA Scalers in OptiKube
+In Optikube, the operator backend plays a crucial role in facilitating the creation and configuration of Kubernetes Event-Driven Autoscalers (KEDA), which are essential for achieving dynamic and responsive scaling. This capability allows Optikube to utilize resources more efficiently and adapt quickly to changing workload demands. Here's an in-depth look at how KEDA scalers are integrated within Optikube and how they are configured based on different optimization strategies.
 
+### KEDA Scalers
+KEDA scalers are designed to adjust the number of pods in a Kubernetes deployment dynamically based on the actual usage of application resources. The Optikube backend utilizes these scalers to ensure that resource allocation is both efficient and responsive to the needs of the applications it manages. This is achieved by configuring KEDA scalers according to optimization strategies derived from user input, which determine the behavior of autoscaling actions. 
+
+### Configuring KEDA Scalers Based on Optimization Strategies
+Optikube configures KEDA scalers based on three main optimization strategies: Performance, Cost Efficiency, and Balanced. Each strategy tailors the scaling behavior to meet specific operational goals:
+
+#### Performance Strategy
+- **Lower CPU Utilization:** Setting a lower CPU utilization threshold allows the scaler to activate additional resources more quickly, ensuring that performance remains high even under increased load.
+- **Lower Cooldown Period:** This reduces the wait time before another scaling operation can occur, making the scaler highly responsive to changes in demand.
+- **Stricter Scale-Down Policies:** Ensures that resources are not prematurely reduced, maintaining higher availability and performance.
+- **Longer Stabilization Window on Scale-Down:** This means that the scaler will wait longer before reducing resources, ensuring stability during fluctuating workloads.
+- **Liberal Policies on Scale-Up:** Allows for rapid scaling up by quickly allocating more resources when needed, with a short stabilization window to respond swiftly to spikes in demand.
+
+#### Cost Efficient Strategy
+- **Higher CPU Utilization:** By setting a higher CPU utilization target, the scaler maximizes the usage of each pod, reducing the number of pods required and hence the cost.
+- **Higher Cooldown Period:** Increases the interval between scaling actions, reducing the frequency of scale-up and scale-down operations to save costs.
+- **Liberal Scale-Down Policies:** Promotes quicker release of resources when they are not needed, which helps in reducing operational costs.
+- **Short Stabilization Window on Scale-Down:** Ensures that scaling down happens promptly when the demand decreases, avoiding unnecessary resource usage.
+- **Strict Policies on Scale-Up:** By having stricter conditions for scaling up, this strategy maintains minimal resource usage, with a long stabilization window to prevent frequent scaling actions
+
+#### Balanced Strategy
+- **Moderates between Performance and Cost Efficiency:** This strategy takes a middle path, incorporating elements from both the performance and cost-efficient strategies. It aims to provide a reasonable level of responsiveness and performance while also considering cost implications.
+
+### Impact of Optimization Strategies on KEDA Scalers
+The choice of optimization strategy directly influences how KEDA scalers are configured and behave. This alignment ensures that the scaling mechanisms are perfectly suited to the operational priorities of the deployment—whether the focus is on maintaining high performance, reducing costs, or balancing the two. Through intelligent scaling decisions influenced by these strategies, Optikube enhances resource utilization and operational efficiency across Kubernetes environments.
 
 ## Hourly Resource Optimization
