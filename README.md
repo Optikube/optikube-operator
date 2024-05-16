@@ -16,12 +16,12 @@ OptiKube Operator is custom Kubernetes operator for [OptiKube](https://github.co
 The operator component of OptiKube is responsible for the core functionalities that drive resource optimization and autoscaling. It enables:
 - **Creation of KEDA Autoscalers:** Based on user-submitted settings that define the sensitivity and responsiveness of the scaling actions.
 - **Hourly Resource Optimization:** Regularly queries Kubecost to gather data and optimizes resource allocation for deployments with active KEDA scalers based on historical and current usage statistics.
-
+---
 
 ## Optimization Settings in OptiKube
 Optimization settings in OptiKube are pivotal for tailoring Kubernetes deployment strategies according to specific needs, enabling a more effective management of resources and costs. These settings are derived from user inputs during the creation of Kubernetes Event-Driven Autoscalers (KEDA) and are crucial for defining the operational behavior of these scalers. Here's an in-depth look at how these settings influence the configuration and operation of the OptiKube operator.
 
-### Overview
+### Optimization Overview
 When users configure a KEDA scaler in OptiKube, they input various optimization parameters that directly influence how the application behaves under different load conditions. Based on these inputs, a weighted optimization score is calculated and stored along with the configuration settings in a Redis database. This score is instrumental in determining which of the three optimization strategies—Balanced, Cost Efficient, and Performance—is applied to the Kubernetes deployment.
 
 ### Optimization Strategies
@@ -45,8 +45,7 @@ Each optimization strategy applies distinct policies and thresholds that impact 
 - **Cost Efficiency:** Higher CPU utilization and tighter requests/limits are set to reduce costs, making it an optimal choice for steady, non-critical applications.
 - **Balanced:** This flexible approach adjusts target utilization and request/limit settings to maintain adequate performance while managing costs, suitable for variably loaded systems.
 - **Performance:** Emphasizes availability of resources with lower utilization targets and more generous requests and limits, ensuring that critical and dynamic workloads are supported without compromise
-
-
+----
 ## KEDA Scalers in OptiKube
 In OptiKube, the operator backend plays a crucial role in facilitating the creation and configuration of Kubernetes Event-Driven Autoscalers (KEDA), which are essential for achieving dynamic and responsive scaling. This capability allows OptiKube to utilize resources more efficiently and adapt quickly to changing workload demands. Here's an in-depth look at how KEDA scalers are integrated within OptiKube and how they are configured based on different optimization strategies.
 
@@ -75,8 +74,7 @@ OptiKube configures KEDA scalers based on three main optimization strategies: Pe
 
 ### Impact of Optimization Strategies on KEDA Scalers
 The choice of optimization strategy directly influences how KEDA scalers are configured and behave. This alignment ensures that the scaling mechanisms are perfectly suited to the operational priorities of the deployment—whether the focus is on maintaining high performance, reducing costs, or balancing the two. Through intelligent scaling decisions influenced by these strategies, OptiKube enhances resource utilization and operational efficiency across Kubernetes environments.
-
-
+---
 ## Hourly Optimization in OptiKube
 OptiKube’s operator is designed to continuously refine and optimize Kubernetes deployments to ensure efficient resource usage and cost-effectiveness. Here's an in-depth exploration of the hourly optimization process facilitated by the Optikube operator backend, highlighting the sophisticated mechanism it uses to dynamically adjust deployment resources based on real-time data and predefined user settings.
 
